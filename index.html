@@ -27,6 +27,34 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 #eng-stat.on{color:var(--green)}
 #car-name-hud{font-size:11px;letter-spacing:1px;color:var(--gold2);background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:3px 10px;backdrop-filter:blur(10px);text-align:center;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* ── Bouton Engine Mobile ── */
+#engine-btn{
+  position:fixed;top:14px;left:14px;z-index:20;
+  width:64px;height:64px;border-radius:50%;
+  border:2px solid var(--red);
+  background:rgba(231,76,60,0.15);
+  color:var(--red);
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  cursor:pointer;font-family:var(--ff);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  backdrop-filter:blur(10px);
+  transition:all .2s;
+  touch-action:manipulation;
+  pointer-events:all;
+}
+#engine-btn.on{
+  border-color:var(--green);
+  background:rgba(46,204,113,0.2);
+  color:var(--green);
+  box-shadow:0 0 18px rgba(46,204,113,0.35);
+}
+#engine-btn .eng-icon{font-size:18px;line-height:1}
+#engine-btn .eng-label{font-size:8px;letter-spacing:1.5px}
+/* Masquer sur desktop si assez large */
+@media(min-width:900px){
+  #engine-btn{display:none}
+}
+
 /* ── Message ── */
 #msg{position:fixed;bottom:225px;left:50%;transform:translateX(-50%);z-index:20;pointer-events:none;white-space:nowrap}
 #msg-txt{background:rgba(0,0,0,0.82);border:1px solid var(--gold);border-radius:8px;padding:9px 20px;font-size:13px;letter-spacing:.8px;color:var(--gold2);text-align:center;backdrop-filter:blur(6px);transition:opacity .4s}
@@ -76,6 +104,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 #sc{position:fixed;bottom:0;left:12px;z-index:15;background:var(--panel);border:1px solid var(--border);border-bottom:none;border-radius:9px 9px 0 0;padding:7px 11px;font-size:10px;color:var(--dim);backdrop-filter:blur(12px);line-height:1.9}
 #sc b{color:var(--gold2)}
 #sc kbd{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:3px;padding:0 4px;font-family:var(--fm);font-size:9px;color:var(--gold)}
+@media(max-width:600px){#sc{display:none}}
 
 @keyframes sf{0%,100%{opacity:1}50%{opacity:0}}
 .sf{animation:sf .35s ease-in-out 4}
@@ -97,6 +126,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
   display:flex;align-items:center;justify-content:space-between;
   padding:18px 28px 12px;
   border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:8px;
 }
 #garage-header h1{font-size:22px;letter-spacing:3px;color:var(--gold2);font-family:var(--fm)}
 #garage-header span{font-size:12px;color:var(--dim);letter-spacing:1px}
@@ -112,6 +142,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
   overflow-y:auto;
   padding:14px 10px;
   display:flex;flex-direction:column;gap:8px;
+}
+@media(max-width:600px){
+  #garage-body{flex-direction:column}
+  #car-list-panel{width:100%;min-width:unset;border-right:none;border-bottom:1px solid var(--border);max-height:220px}
 }
 .car-card{
   background:rgba(255,255,255,0.04);
@@ -155,6 +189,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
   padding:24px 32px;
   display:flex;flex-direction:column;gap:24px;
 }
+@media(max-width:600px){
+  #car-detail-panel{padding:14px 14px}
+}
 .detail-section{
   background:rgba(255,255,255,.03);
   border:1px solid var(--border);
@@ -177,7 +214,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 .form-input[type=range]{padding:0;height:6px;accent-color:var(--gold);cursor:pointer}
 .range-val{font-family:var(--fm);font-size:13px;color:var(--gold);min-width:52px;text-align:right}
 
-.btn-row{display:flex;gap:10px;margin-top:4px}
+.btn-row{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
 .btn-primary{
   background:rgba(200,169,110,.2);border:1px solid var(--gold);border-radius:7px;
   color:var(--gold2);padding:9px 22px;cursor:pointer;font-family:var(--ff);font-size:13px;letter-spacing:1px;
@@ -233,6 +270,85 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 #car-nav{position:fixed;top:50%;right:14px;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:8px}
 .nav-arrow{background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:8px 12px;cursor:pointer;color:var(--gold);font-size:16px;backdrop-filter:blur(10px);transition:all .15s}
 .nav-arrow:hover{background:rgba(200,169,110,.2);border-color:var(--gold)}
+
+/* ═══════════════════════════════
+   CALIBRATION PANEL
+═══════════════════════════════ */
+#calib-panel{display:none;flex-direction:column;gap:0}
+#calib-panel.visible{display:flex}
+
+.calib-viewport{
+  width:100%;height:260px;
+  background:rgba(0,0,0,.6);
+  border:1px solid var(--border);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  margin-bottom:14px;
+}
+.calib-car-svg{
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+.calib-arrow{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  font-size:22px;color:var(--green);
+  text-shadow:0 0 12px rgba(46,204,113,.7);
+  letter-spacing:4px;
+}
+.calib-label{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  font-size:10px;letter-spacing:2px;color:var(--dim);white-space:nowrap;
+  font-family:var(--fm);
+}
+.calib-controls{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.calib-btn{
+  background:rgba(200,169,110,.1);border:1px solid var(--border);border-radius:8px;
+  padding:10px 20px;cursor:pointer;color:var(--gold);font-size:20px;
+  transition:all .15s;flex:1;text-align:center;min-width:50px;
+}
+.calib-btn:hover{background:rgba(200,169,110,.25);border-color:var(--gold)}
+.calib-angle-display{
+  font-family:var(--fm);font-size:20px;color:var(--gold2);
+  text-align:center;flex:1;
+}
+.calib-hint{
+  background:rgba(46,204,113,.07);border:1px solid rgba(46,204,113,.2);
+  border-radius:8px;padding:12px 16px;font-size:12px;color:rgba(46,204,113,.8);
+  line-height:1.6;letter-spacing:.5px;margin-bottom:14px;
+}
+
+/* ═══════════════════════════════
+   GEAR EDITOR
+═══════════════════════════════ */
+.gear-editor{margin-top:8px}
+.gear-row{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;margin-bottom:6px;
+}
+.gear-row-label{
+  font-family:var(--fm);font-size:14px;font-weight:700;color:var(--gold2);
+  width:28px;text-align:center;flex-shrink:0;
+}
+.gear-row-field{display:flex;flex-direction:column;flex:1;gap:2px}
+.gear-row-field label{font-size:9px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
+.gear-row-input{
+  background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:5px;
+  padding:5px 9px;font-size:13px;color:var(--text);font-family:var(--fm);width:100%;
+}
+.gear-row-input:focus{outline:none;border-color:var(--gold)}
+.gear-del-btn{
+  background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);
+  border-radius:5px;color:var(--red);padding:5px 10px;cursor:pointer;font-size:12px;
+  flex-shrink:0;transition:all .15s;
+}
+.gear-del-btn:hover{background:rgba(231,76,60,.25)}
+.gear-fixed{opacity:.55;cursor:default}
+.gear-add-btn{
+  width:100%;background:rgba(46,204,113,.08);border:1px dashed rgba(46,204,113,.3);
+  border-radius:7px;padding:9px;text-align:center;color:var(--green);
+  font-size:12px;letter-spacing:1px;cursor:pointer;transition:all .15s;
+}
+.gear-add-btn:hover{background:rgba(46,204,113,.15);border-color:var(--green)}
 </style>
 </head>
 <body>
@@ -255,6 +371,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
     <div class="hbox"><span class="hlabel">ÉTAT</span><span id="hv-stall" style="font-size:17px;color:var(--red)">●</span></div>
   </div>
 </div>
+
+<!-- BOUTON ENGINE MOBILE -->
+<button id="engine-btn" onclick="toggleEngineMobile()">
+  <span class="eng-icon">⚙️</span>
+  <span class="eng-label" id="eng-btn-label">START</span>
+</button>
 
 <div id="msg"><div id="msg-txt">Appuyez sur <kbd>E</kbd> pour démarrer</div></div>
 
@@ -414,6 +536,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
             <span class="range-val" id="af-weight-val">1400</span>
           </div>
         </div>
+
+        <!-- GEAR EDITOR AJOUT -->
+        <div class="detail-section">
+          <h3>🔧 Boîte de vitesses</h3>
+          <div class="calib-hint">Inspiré de la voiture par défaut — modifiez les rapports et vitesses max par rapport.</div>
+          <div class="gear-editor" id="af-gear-editor"></div>
+          <button class="gear-add-btn" id="af-gear-add-btn">+ Ajouter un rapport</button>
+        </div>
+
         <div class="btn-row">
           <button class="btn-primary" id="af-save-btn">💾 SAUVEGARDER</button>
           <button class="btn-secondary" id="af-cancel-btn">ANNULER</button>
@@ -422,69 +553,140 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 
       <!-- Détail voiture sélectionnée -->
       <div id="car-edit-panel" style="display:none;flex-direction:column;gap:24px">
-        <div class="detail-section">
-          <h3>🚗 Informations</h3>
-          <div class="form-row">
-            <span class="form-label">Nom</span>
-            <input class="form-input" id="ed-name" type="text">
+        <!-- Tabs -->
+        <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0">
+          <button class="edit-tab active" data-tab="info" style="flex:1;padding:10px;background:rgba(200,169,110,.15);border:none;color:var(--gold2);cursor:pointer;font-family:var(--ff);font-size:12px;letter-spacing:1px;border-right:1px solid var(--border)">🚗 INFO</button>
+          <button class="edit-tab" data-tab="gears" style="flex:1;padding:10px;background:transparent;border:none;color:var(--dim);cursor:pointer;font-family:var(--ff);font-size:12px;letter-spacing:1px;border-right:1px solid var(--border)">🔧 VITESSES</button>
+          <button class="edit-tab" data-tab="calib" style="flex:1;padding:10px;background:transparent;border:none;color:var(--dim);cursor:pointer;font-family:var(--ff);font-size:12px;letter-spacing:1px">📐 CALIBRER</button>
+        </div>
+
+        <!-- Tab: Info -->
+        <div id="tab-info">
+          <div class="detail-section">
+            <h3>🚗 Informations</h3>
+            <div class="form-row">
+              <span class="form-label">Nom</span>
+              <input class="form-input" id="ed-name" type="text">
+            </div>
+            <div class="form-row">
+              <span class="form-label">Marque</span>
+              <input class="form-input" id="ed-brand" type="text">
+            </div>
+            <div class="form-row">
+              <span class="form-label">Fichier .gltf</span>
+              <input class="form-input" id="ed-gltf" type="text">
+            </div>
+            <div class="form-row">
+              <span class="form-label">Dossier textures</span>
+              <input class="form-input" id="ed-tex" type="text">
+            </div>
           </div>
-          <div class="form-row">
-            <span class="form-label">Marque</span>
-            <input class="form-input" id="ed-brand" type="text">
+          <div class="detail-section">
+            <h3>⚙️ Moteur & Performances</h3>
+            <div class="form-row">
+              <span class="form-label">Chevaux (HP)</span>
+              <input class="form-input" id="ed-hp" type="range" min="80" max="1500" oninput="document.getElementById('ed-hp-val').textContent=this.value">
+              <span class="range-val" id="ed-hp-val">300</span>
+            </div>
+            <div class="form-row">
+              <span class="form-label">Couple (Nm)</span>
+              <input class="form-input" id="ed-torq" type="range" min="100" max="1200" oninput="document.getElementById('ed-torq-val').textContent=this.value">
+              <span class="range-val" id="ed-torq-val">400</span>
+            </div>
+            <div class="form-row">
+              <span class="form-label">Vitesse max (km/h)</span>
+              <input class="form-input" id="ed-vmax" type="range" min="80" max="400" oninput="document.getElementById('ed-vmax-val').textContent=this.value">
+              <span class="range-val" id="ed-vmax-val">250</span>
+            </div>
+            <div class="form-row">
+              <span class="form-label">0-100 (s)</span>
+              <input class="form-input" id="ed-acc" type="range" min="2" max="18" step="0.1" oninput="document.getElementById('ed-acc-val').textContent=parseFloat(this.value).toFixed(1)">
+              <span class="range-val" id="ed-acc-val">6.0</span>
+            </div>
+            <div class="form-row">
+              <span class="form-label">Régime max (RPM)</span>
+              <input class="form-input" id="ed-rpm" type="range" min="4000" max="12000" step="100" oninput="document.getElementById('ed-rpm-val').textContent=this.value">
+              <span class="range-val" id="ed-rpm-val">7200</span>
+            </div>
+            <div class="form-row">
+              <span class="form-label">Adhérence</span>
+              <input class="form-input" id="ed-grip" type="range" min="1" max="10" step="0.5" oninput="document.getElementById('ed-grip-val').textContent=parseFloat(this.value).toFixed(1)">
+              <span class="range-val" id="ed-grip-val">5.0</span>
+            </div>
+            <div class="form-row">
+              <span class="form-label">Poids (kg)</span>
+              <input class="form-input" id="ed-weight" type="range" min="700" max="2500" step="10" oninput="document.getElementById('ed-weight-val').textContent=this.value">
+              <span class="range-val" id="ed-weight-val">1400</span>
+            </div>
           </div>
-          <div class="form-row">
-            <span class="form-label">Fichier .gltf</span>
-            <input class="form-input" id="ed-gltf" type="text">
-          </div>
-          <div class="form-row">
-            <span class="form-label">Dossier textures</span>
-            <input class="form-input" id="ed-tex" type="text">
+          <div class="btn-row">
+            <button class="btn-primary" id="ed-save-btn">💾 SAUVEGARDER</button>
+            <button id="drive-btn" class="visible">🏁 CONDUIRE CETTE VOITURE</button>
+            <button class="btn-danger" id="ed-del-btn">🗑 SUPPRIMER</button>
           </div>
         </div>
-        <div class="detail-section">
-          <h3>⚙️ Moteur & Performances</h3>
-          <div class="form-row">
-            <span class="form-label">Chevaux (HP)</span>
-            <input class="form-input" id="ed-hp" type="range" min="80" max="1500" oninput="document.getElementById('ed-hp-val').textContent=this.value">
-            <span class="range-val" id="ed-hp-val">300</span>
+
+        <!-- Tab: Vitesses -->
+        <div id="tab-gears" style="display:none">
+          <div class="detail-section">
+            <h3>🔧 Boîte de vitesses personnalisée</h3>
+            <div class="calib-hint">Modifiez les rapports et vitesses max par rapport. Les vitesses R et N ne sont pas modifiables.</div>
+            <div class="gear-editor" id="ed-gear-editor"></div>
+            <button class="gear-add-btn" id="ed-gear-add-btn">+ Ajouter un rapport</button>
           </div>
-          <div class="form-row">
-            <span class="form-label">Couple (Nm)</span>
-            <input class="form-input" id="ed-torq" type="range" min="100" max="1200" oninput="document.getElementById('ed-torq-val').textContent=this.value">
-            <span class="range-val" id="ed-torq-val">400</span>
-          </div>
-          <div class="form-row">
-            <span class="form-label">Vitesse max (km/h)</span>
-            <input class="form-input" id="ed-vmax" type="range" min="80" max="400" oninput="document.getElementById('ed-vmax-val').textContent=this.value">
-            <span class="range-val" id="ed-vmax-val">250</span>
-          </div>
-          <div class="form-row">
-            <span class="form-label">0-100 (s)</span>
-            <input class="form-input" id="ed-acc" type="range" min="2" max="18" step="0.1" oninput="document.getElementById('ed-acc-val').textContent=parseFloat(this.value).toFixed(1)">
-            <span class="range-val" id="ed-acc-val">6.0</span>
-          </div>
-          <div class="form-row">
-            <span class="form-label">Régime max (RPM)</span>
-            <input class="form-input" id="ed-rpm" type="range" min="4000" max="12000" step="100" oninput="document.getElementById('ed-rpm-val').textContent=this.value">
-            <span class="range-val" id="ed-rpm-val">7200</span>
-          </div>
-          <div class="form-row">
-            <span class="form-label">Adhérence</span>
-            <input class="form-input" id="ed-grip" type="range" min="1" max="10" step="0.5" oninput="document.getElementById('ed-grip-val').textContent=parseFloat(this.value).toFixed(1)">
-            <span class="range-val" id="ed-grip-val">5.0</span>
-          </div>
-          <div class="form-row">
-            <span class="form-label">Poids (kg)</span>
-            <input class="form-input" id="ed-weight" type="range" min="700" max="2500" step="10" oninput="document.getElementById('ed-weight-val').textContent=this.value">
-            <span class="range-val" id="ed-weight-val">1400</span>
+          <div class="btn-row">
+            <button class="btn-primary" id="ed-gears-save-btn">💾 SAUVEGARDER LES VITESSES</button>
           </div>
         </div>
-        <div class="btn-row">
-          <button class="btn-primary" id="ed-save-btn">💾 SAUVEGARDER</button>
-          <button id="drive-btn" class="visible">🏁 CONDUIRE CETTE VOITURE</button>
-          <button class="btn-danger" id="ed-del-btn">🗑 SUPPRIMER</button>
+
+        <!-- Tab: Calibration -->
+        <div id="tab-calib" style="display:none">
+          <div class="detail-section">
+            <h3>📐 Calibration du sens d'avance</h3>
+            <div class="calib-hint">
+              ↑ La flèche verte indique le sens <b>AVANT</b> de la voiture dans le jeu.<br>
+              Faites pivoter le modèle jusqu'à ce que la voiture regarde dans ce sens.
+            </div>
+            <div class="calib-viewport" id="calib-viewport">
+              <div class="calib-arrow">↑ AVANT</div>
+              <div id="calib-car-wrap" class="calib-car-svg">
+                <!-- SVG car top-view -->
+                <svg width="90" height="160" viewBox="0 0 90 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Body -->
+                  <rect x="12" y="20" width="66" height="120" rx="14" fill="#c8a96e" fill-opacity=".25" stroke="#c8a96e" stroke-width="2"/>
+                  <!-- Windshield front -->
+                  <rect x="20" y="32" width="50" height="22" rx="5" fill="#3498db" fill-opacity=".4" stroke="#3498db" stroke-width="1"/>
+                  <!-- Windshield rear -->
+                  <rect x="20" y="106" width="50" height="18" rx="5" fill="#3498db" fill-opacity=".25" stroke="#3498db" stroke-width="1"/>
+                  <!-- Headlights -->
+                  <rect x="14" y="22" width="14" height="10" rx="3" fill="#f0e060" fill-opacity=".9"/>
+                  <rect x="62" y="22" width="14" height="10" rx="3" fill="#f0e060" fill-opacity=".9"/>
+                  <!-- Taillights -->
+                  <rect x="14" y="128" width="14" height="10" rx="3" fill="#e74c3c" fill-opacity=".9"/>
+                  <rect x="62" y="128" width="14" height="10" rx="3" fill="#e74c3c" fill-opacity=".9"/>
+                  <!-- Wheels -->
+                  <rect x="0" y="34" width="14" height="26" rx="4" fill="#333" stroke="#888" stroke-width="1.5"/>
+                  <rect x="76" y="34" width="14" height="26" rx="4" fill="#333" stroke="#888" stroke-width="1.5"/>
+                  <rect x="0" y="100" width="14" height="26" rx="4" fill="#333" stroke="#888" stroke-width="1.5"/>
+                  <rect x="76" y="100" width="14" height="26" rx="4" fill="#333" stroke="#888" stroke-width="1.5"/>
+                  <!-- Arrow on hood -->
+                  <path d="M45 58 L37 72 L43 72 L43 85 L47 85 L47 72 L53 72 Z" fill="#2ecc71" fill-opacity=".8"/>
+                </svg>
+              </div>
+              <div class="calib-label" id="calib-deg-label">0°</div>
+            </div>
+            <div class="calib-controls">
+              <button class="calib-btn" id="calib-ccw" title="Pivoter -90°">↺ 90°</button>
+              <div class="calib-angle-display" id="calib-angle-disp">0°</div>
+              <button class="calib-btn" id="calib-cw" title="Pivoter +90°">↻ 90°</button>
+            </div>
+            <div class="calib-controls">
+              <button class="calib-btn" id="calib-reset" style="flex:none;padding:8px 16px;font-size:13px">↺ Reset</button>
+              <button class="btn-primary" id="calib-save-btn" style="flex:1">💾 Sauvegarder le calibrage</button>
+            </div>
+          </div>
         </div>
-      </div>
+      </div><!-- /car-edit-panel -->
 
     </div><!-- /car-detail-panel -->
   </div><!-- /garage-body -->
@@ -514,14 +716,24 @@ const db    = getDatabase(fbApp);
 const carsRef = ref(db, 'simulator/cars');
 
 // ════════════════════════════════════════════════
+// DEFAULT GEAR CONFIG (référence)
+// ════════════════════════════════════════════════
+var DEFAULT_GEARS = [
+  { label:'1', ratio: 3.8, spdMax: 32 },
+  { label:'2', ratio: 2.2, spdMax: 60 },
+  { label:'3', ratio: 1.5, spdMax: 90 },
+  { label:'4', ratio: 1.05, spdMax: 135 },
+  { label:'5', ratio: 0.82, spdMax: 200 },
+];
+
+// ════════════════════════════════════════════════
 // CAR DATABASE (local mirror of Firebase)
 // ════════════════════════════════════════════════
-var carDB = {};        // id -> car object
-var carOrder = [];     // ordered ids
-var activeCar = null;  // id of currently driven car
-var selectedCar = null;// id selected in garage
+var carDB = {};
+var carOrder = [];
+var activeCar = null;
+var selectedCar = null;
 
-// Default fallback car (always present in memory)
 var DEFAULT_CAR = {
   id: '__default__',
   name: 'Voiture par défaut',
@@ -529,22 +741,24 @@ var DEFAULT_CAR = {
   gltfPath: '',
   texFolder: '',
   hp: 200, torque: 350, vmax: 200, acc: 8.0,
-  rpmMax: 7200, grip: 5.0, weight: 1300
+  rpmMax: 7200, grip: 5.0, weight: 1300,
+  calibYaw: 0,
+  gears: JSON.parse(JSON.stringify(DEFAULT_GEARS))
 };
 
-// Apply car physics to ENG based on car data
 function applyCarToEngine(car) {
   if (!car) car = DEFAULT_CAR;
-  var hpFactor  = car.hp / 200;       // baseline 200hp
+  var hpFactor  = car.hp / 200;
   var grpFactor = car.grip / 5.0;
-  var wFactor   = 1300 / car.weight;  // lighter = faster
+  var wFactor   = 1300 / car.weight;
+  var gears = car.gears && car.gears.length ? car.gears : DEFAULT_GEARS;
 
   ENG.applyProfile({
     rpmMax:    car.rpmMax || 7200,
-    spdMax5:   car.vmax  || 200,
     powerMul:  hpFactor * wFactor,
     gripMul:   grpFactor,
-    acc0100:   car.acc   || 8.0
+    acc0100:   car.acc || 8.0,
+    gears:     gears
   });
 
   var nameEl = document.getElementById('car-name-hud');
@@ -561,6 +775,8 @@ onValue(carsRef, function(snap) {
     snap.forEach(function(child) {
       var d = child.val();
       d.id = child.key;
+      // Ensure gears array
+      if (!d.gears || !Array.isArray(d.gears)) d.gears = JSON.parse(JSON.stringify(DEFAULT_GEARS));
       carDB[d.id] = d;
       carOrder.push(d.id);
     });
@@ -568,7 +784,6 @@ onValue(carsRef, function(snap) {
   document.getElementById('garage-status').textContent =
     carOrder.length + ' voiture' + (carOrder.length !== 1 ? 's' : '');
   renderCarList();
-  // If active car was updated, re-apply
   if (activeCar && carDB[activeCar]) applyCarToEngine(carDB[activeCar]);
 });
 
@@ -576,10 +791,165 @@ function saveCar(id, data) {
   var r = id ? ref(db, 'simulator/cars/' + id) : push(carsRef);
   return set(r, data).then(function() { return id || r.key; });
 }
+function deleteCar(id) { return remove(ref(db, 'simulator/cars/' + id)); }
 
-function deleteCar(id) {
-  return remove(ref(db, 'simulator/cars/' + id));
+// ════════════════════════════════════════════════
+// GEAR EDITOR helpers
+// ════════════════════════════════════════════════
+function renderGearEditor(containerId, gears) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+
+  // Fixed: R and N
+  var fixedRows = [
+    { label: 'R', ratio: -3.6, spdMax: 22, fixed: true },
+    { label: 'N', ratio: 0, spdMax: 0, fixed: true },
+  ];
+  fixedRows.forEach(function(g) {
+    var row = document.createElement('div');
+    row.className = 'gear-row gear-fixed';
+    row.innerHTML =
+      '<div class="gear-row-label">' + g.label + '</div>' +
+      '<div class="gear-row-field"><label>Rapport</label><input class="gear-row-input" type="number" value="' + g.ratio + '" disabled style="opacity:.4"></div>' +
+      '<div class="gear-row-field"><label>Vmax km/h</label><input class="gear-row-input" type="number" value="' + g.spdMax + '" disabled style="opacity:.4"></div>' +
+      '<div style="width:36px"></div>';
+    container.appendChild(row);
+  });
+
+  // Variable gears
+  gears.forEach(function(g, i) {
+    var row = document.createElement('div');
+    row.className = 'gear-row';
+    row.dataset.idx = i;
+    row.innerHTML =
+      '<div class="gear-row-label">' + g.label + '</div>' +
+      '<div class="gear-row-field"><label>Rapport</label><input class="gear-row-input gear-ratio" type="number" step="0.01" value="' + g.ratio + '"></div>' +
+      '<div class="gear-row-field"><label>Vmax km/h</label><input class="gear-row-input gear-spdmax" type="number" value="' + g.spdMax + '"></div>' +
+      '<button class="gear-del-btn" data-idx="' + i + '">✕</button>';
+    container.appendChild(row);
+  });
+
+  // Delete buttons
+  container.querySelectorAll('.gear-del-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = parseInt(btn.dataset.idx);
+      gears.splice(idx, 1);
+      // Relabel
+      gears.forEach(function(g, i) { g.label = String(i + 1); });
+      renderGearEditor(containerId, gears);
+    });
+  });
 }
+
+function readGearEditor(containerId, gears) {
+  var container = document.getElementById(containerId);
+  if (!container) return gears;
+  var rows = container.querySelectorAll('.gear-row:not(.gear-fixed)');
+  rows.forEach(function(row, i) {
+    if (gears[i]) {
+      var ratioEl = row.querySelector('.gear-ratio');
+      var spdEl   = row.querySelector('.gear-spdmax');
+      if (ratioEl) gears[i].ratio  = parseFloat(ratioEl.value) || gears[i].ratio;
+      if (spdEl)   gears[i].spdMax = parseFloat(spdEl.value)   || gears[i].spdMax;
+    }
+  });
+  return gears;
+}
+
+function addGearRow(editorId, gearsArr) {
+  var last = gearsArr.length ? gearsArr[gearsArr.length - 1] : { ratio: 0.82, spdMax: 200 };
+  var newRatio = Math.max(0.5, last.ratio - 0.15).toFixed(2);
+  var newSpd   = Math.round(last.spdMax * 1.25);
+  gearsArr.push({ label: String(gearsArr.length + 1), ratio: parseFloat(newRatio), spdMax: newSpd });
+  renderGearEditor(editorId, gearsArr);
+  // Also update shifter buttons dynamically
+  rebuildShifterBtns(gearsArr);
+}
+
+function rebuildShifterBtns(gears) {
+  var grid = document.getElementById('sh-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  var all = ['R', 'N'].concat(gears.map(function(g) { return g.label; }));
+  all.forEach(function(g) {
+    var b = document.createElement('div');
+    b.className = 'gbtn' + (g === ENG.s.gear ? ' active' : '');
+    b.dataset.g = g;
+    b.textContent = g;
+    b.addEventListener('click', function() {
+      var ok = ENG.setGear(g);
+      if (ok !== false) Controls.updateGearUI();
+    });
+    grid.appendChild(b);
+  });
+}
+
+// Temp gears state for editors
+var _afGears = JSON.parse(JSON.stringify(DEFAULT_GEARS));
+var _edGears = [];
+
+// ════════════════════════════════════════════════
+// CALIBRATION STATE
+// ════════════════════════════════════════════════
+var _calibAngle = 0; // degrees, multiple of 90
+
+function updateCalibDisplay(angle) {
+  _calibAngle = angle;
+  var wrap = document.getElementById('calib-car-wrap');
+  var disp = document.getElementById('calib-angle-disp');
+  var lbl  = document.getElementById('calib-deg-label');
+  if (wrap) wrap.style.transform = 'rotate(' + angle + 'deg)';
+  if (disp) disp.textContent = angle + '°';
+  if (lbl)  lbl.textContent  = angle + '°';
+}
+
+document.getElementById('calib-ccw').addEventListener('click', function() {
+  updateCalibDisplay((_calibAngle - 90 + 360) % 360);
+});
+document.getElementById('calib-cw').addEventListener('click', function() {
+  updateCalibDisplay((_calibAngle + 90) % 360);
+});
+document.getElementById('calib-reset').addEventListener('click', function() {
+  updateCalibDisplay(0);
+});
+document.getElementById('calib-save-btn').addEventListener('click', function() {
+  if (!selectedCar || !carDB[selectedCar]) return;
+  var data = Object.assign({}, carDB[selectedCar], { calibYaw: _calibAngle });
+  var btn = this; btn.textContent = '⏳…'; btn.disabled = true;
+  saveCar(selectedCar, data).then(function() {
+    btn.textContent = '💾 Sauvegarder le calibrage'; btn.disabled = false;
+    // Apply to 3D model immediately if active
+    if (activeCar === selectedCar) {
+      World.setCarYawOffset(_calibAngle * Math.PI / 180);
+    }
+    ENG.notify('✅ Calibrage sauvegardé — modèle pivoté de ' + _calibAngle + '°');
+  }).catch(function(e) { btn.textContent='💾 Sauvegarder le calibrage'; btn.disabled=false; alert('Erreur: '+e.message); });
+});
+
+// ════════════════════════════════════════════════
+// TABS in edit panel
+// ════════════════════════════════════════════════
+document.querySelectorAll('.edit-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    var target = tab.dataset.tab;
+    document.querySelectorAll('.edit-tab').forEach(function(t) {
+      t.style.background = 'transparent';
+      t.style.color = 'var(--dim)';
+    });
+    tab.style.background = 'rgba(200,169,110,.15)';
+    tab.style.color = 'var(--gold2)';
+    ['info','gears','calib'].forEach(function(name) {
+      var el = document.getElementById('tab-' + name);
+      if (el) el.style.display = name === target ? 'block' : 'none';
+    });
+    // Init gear editor on tab open
+    if (target === 'gears' && selectedCar && carDB[selectedCar]) {
+      _edGears = JSON.parse(JSON.stringify(carDB[selectedCar].gears || DEFAULT_GEARS));
+      renderGearEditor('ed-gear-editor', _edGears);
+    }
+  });
+});
 
 // ════════════════════════════════════════════════
 // GARAGE UI
@@ -599,11 +969,11 @@ function renderCarList() {
     div.className = 'car-card' + (id === selectedCar ? ' selected' : '') + (id === activeCar ? ' active' : '');
     div.innerHTML =
       '<div class="car-card-name">' + esc(car.name) + (id === activeCar ? ' <span style="color:var(--green);font-size:10px">● EN JEU</span>' : '') + '</div>' +
-      '<div class="car-card-sub">' + esc(car.brand || '—') + '</div>' +
+      '<div class="car-card-sub">' + esc(car.brand || '—') + (car.calibYaw ? ' <span style="color:var(--dim);font-size:9px">📐 ' + car.calibYaw + '°</span>' : '') + '</div>' +
       '<div class="car-card-stats">' +
         '<div class="car-stat"><span>' + (car.hp||'—') + '</span> HP</div>' +
         '<div class="car-stat"><span>' + (car.vmax||'—') + '</span> km/h</div>' +
-        '<div class="car-stat"><span>' + (car.acc||'—') + '</span>s 0-100</div>' +
+        '<div class="car-stat"><span>' + ((car.gears||DEFAULT_GEARS).length) + '</span> vit.</div>' +
       '</div>' +
       '<button class="car-card-del" data-id="' + id + '">✕</button>';
     div.addEventListener('click', function(e) {
@@ -640,15 +1010,15 @@ function showAddForm() {
   document.getElementById('detail-empty').style.display = 'none';
   document.getElementById('add-form-panel').classList.add('visible');
   document.getElementById('car-edit-panel').style.display = 'none';
-  // Reset form
   ['name','brand','gltf','tex'].forEach(function(f){ document.getElementById('af-'+f).value=''; });
-  ['hp','torq','vmax','acc','rpm','grip','weight'].forEach(function(f){
-    var defaults = {hp:300,torq:400,vmax:250,acc:6.0,rpm:7200,grip:5.0,weight:1400};
-    var el = document.getElementById('af-'+f);
-    el.value = defaults[f];
-    var valEl = document.getElementById('af-'+f+'-val');
-    if(valEl) valEl.textContent = ['acc','grip'].includes(f) ? parseFloat(defaults[f]).toFixed(1) : defaults[f];
+  var defaults = {hp:300,torq:400,vmax:250,acc:6.0,rpm:7200,grip:5.0,weight:1400};
+  Object.keys(defaults).forEach(function(f){
+    var el = document.getElementById('af-'+f); if(el) el.value = defaults[f];
+    var vl = document.getElementById('af-'+f+'-val'); if(vl) vl.textContent = ['acc','grip'].includes(f) ? parseFloat(defaults[f]).toFixed(1) : defaults[f];
   });
+  // Init gear editor with defaults
+  _afGears = JSON.parse(JSON.stringify(DEFAULT_GEARS));
+  renderGearEditor('af-gear-editor', _afGears);
 }
 
 function showEditPanel(car) {
@@ -656,6 +1026,15 @@ function showEditPanel(car) {
   document.getElementById('add-form-panel').classList.remove('visible');
   var ep = document.getElementById('car-edit-panel');
   ep.style.display = 'flex';
+
+  // Reset to info tab
+  document.querySelectorAll('.edit-tab').forEach(function(t,i) {
+    t.style.background = i === 0 ? 'rgba(200,169,110,.15)' : 'transparent';
+    t.style.color = i === 0 ? 'var(--gold2)' : 'var(--dim)';
+  });
+  document.getElementById('tab-info').style.display = 'block';
+  document.getElementById('tab-gears').style.display = 'none';
+  document.getElementById('tab-calib').style.display = 'none';
 
   document.getElementById('ed-name').value  = car.name  || '';
   document.getElementById('ed-brand').value = car.brand || '';
@@ -665,14 +1044,19 @@ function showEditPanel(car) {
   var fields = {hp: car.hp||300, torq: car.torque||400, vmax: car.vmax||250,
                 acc: car.acc||6.0, rpm: car.rpmMax||7200, grip: car.grip||5.0, weight: car.weight||1400};
   Object.keys(fields).forEach(function(f){
-    var el = document.getElementById('ed-'+f);
-    if(el){ el.value = fields[f]; }
-    var vl = document.getElementById('ed-'+f+'-val');
-    if(vl) vl.textContent = ['acc','grip'].includes(f) ? parseFloat(fields[f]).toFixed(1) : fields[f];
+    var el = document.getElementById('ed-'+f); if(el) el.value = fields[f];
+    var vl = document.getElementById('ed-'+f+'-val'); if(vl) vl.textContent = ['acc','grip'].includes(f) ? parseFloat(fields[f]).toFixed(1) : fields[f];
   });
+
+  // Init calib angle
+  updateCalibDisplay(car.calibYaw || 0);
+
+  // Gear editor
+  _edGears = JSON.parse(JSON.stringify(car.gears || DEFAULT_GEARS));
 }
 
 function gatherAddForm() {
+  _afGears = readGearEditor('af-gear-editor', _afGears);
   return {
     name:      document.getElementById('af-name').value.trim()  || 'Voiture sans nom',
     brand:     document.getElementById('af-brand').value.trim() || '',
@@ -684,7 +1068,9 @@ function gatherAddForm() {
     acc:       +parseFloat(document.getElementById('af-acc').value).toFixed(1),
     rpmMax:    +document.getElementById('af-rpm').value,
     grip:      +parseFloat(document.getElementById('af-grip').value).toFixed(1),
-    weight:    +document.getElementById('af-weight').value
+    weight:    +document.getElementById('af-weight').value,
+    calibYaw:  0,
+    gears:     _afGears
   };
 }
 
@@ -700,11 +1086,37 @@ function gatherEditForm() {
     acc:       +parseFloat(document.getElementById('ed-acc').value).toFixed(1),
     rpmMax:    +document.getElementById('ed-rpm').value,
     grip:      +parseFloat(document.getElementById('ed-grip').value).toFixed(1),
-    weight:    +document.getElementById('ed-weight').value
+    weight:    +document.getElementById('ed-weight').value,
+    calibYaw:  carDB[selectedCar] ? (carDB[selectedCar].calibYaw || 0) : 0,
+    gears:     carDB[selectedCar] ? (carDB[selectedCar].gears || DEFAULT_GEARS) : DEFAULT_GEARS
   };
 }
 
 function esc(s){ return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Add gear buttons ──
+document.getElementById('af-gear-add-btn').addEventListener('click', function() {
+  addGearRow('af-gear-editor', _afGears);
+});
+document.getElementById('ed-gear-add-btn').addEventListener('click', function() {
+  addGearRow('ed-gear-editor', _edGears);
+});
+
+// ── Save gears tab ──
+document.getElementById('ed-gears-save-btn').addEventListener('click', function() {
+  if (!selectedCar) return;
+  _edGears = readGearEditor('ed-gear-editor', _edGears);
+  var data = Object.assign({}, carDB[selectedCar], { gears: _edGears });
+  var btn = this; btn.textContent='⏳…'; btn.disabled=true;
+  saveCar(selectedCar, data).then(function() {
+    btn.textContent='💾 SAUVEGARDER LES VITESSES'; btn.disabled=false;
+    if (activeCar === selectedCar) {
+      applyCarToEngine(carDB[selectedCar]);
+      rebuildShifterBtns(carDB[selectedCar].gears || DEFAULT_GEARS);
+    }
+    ENG.notify('✅ Boîte de vitesses mise à jour !');
+  }).catch(function(e){ btn.textContent='💾 SAUVEGARDER LES VITESSES'; btn.disabled=false; alert('Erreur: '+e.message); });
+});
 
 // ── Garage button events ──
 document.getElementById('add-car-btn').addEventListener('click', showAddForm);
@@ -715,7 +1127,6 @@ document.getElementById('af-save-btn').addEventListener('click', function() {
   saveCar(null, data).then(function(newId) {
     btn.textContent = '💾 SAUVEGARDER'; btn.disabled = false;
     selectedCar = newId;
-    showEditPanel(carDB[newId] || data);
     document.getElementById('add-form-panel').classList.remove('visible');
     document.getElementById('car-edit-panel').style.display = 'flex';
   }).catch(function(e){ alert('Erreur Firebase: '+e.message); btn.textContent='💾 SAUVEGARDER'; btn.disabled=false; });
@@ -745,26 +1156,23 @@ document.getElementById('ed-del-btn').addEventListener('click', function() {
 document.getElementById('drive-btn').addEventListener('click', function() {
   if (!selectedCar || !carDB[selectedCar]) return;
   activeCar = selectedCar;
-  applyCarToEngine(carDB[activeCar]);
-  // Load GLTF model if path provided
   var car = carDB[activeCar];
+  applyCarToEngine(car);
   if (car.gltfPath) {
     World.loadCarModel(car.gltfPath, car.texFolder);
   } else {
     World.useDefaultCar();
   }
+  World.setCarYawOffset((car.calibYaw || 0) * Math.PI / 180);
+  rebuildShifterBtns(car.gears || DEFAULT_GEARS);
   closeGarage();
   ENG.notify('🏎 ' + car.name + ' — ' + car.hp + ' HP — ' + car.vmax + ' km/h max');
   renderCarList();
 });
 
 // ── Garage open/close ──
-function openGarage() {
-  document.getElementById('garage-overlay').classList.add('open');
-}
-function closeGarage() {
-  document.getElementById('garage-overlay').classList.remove('open');
-}
+function openGarage() { document.getElementById('garage-overlay').classList.add('open'); }
+function closeGarage() { document.getElementById('garage-overlay').classList.remove('open'); }
 document.getElementById('garageBtn').addEventListener('click', openGarage);
 document.getElementById('close-garage').addEventListener('click', closeGarage);
 document.getElementById('garage-overlay').addEventListener('click', function(e) {
@@ -777,36 +1185,86 @@ document.getElementById('prevCar').addEventListener('click', function() {
   var idx = activeCar ? carOrder.indexOf(activeCar) : 0;
   idx = (idx - 1 + carOrder.length) % carOrder.length;
   activeCar = carOrder[idx];
-  applyCarToEngine(carDB[activeCar]);
   var car = carDB[activeCar];
+  applyCarToEngine(car);
   if (car.gltfPath) World.loadCarModel(car.gltfPath, car.texFolder);
   else World.useDefaultCar();
+  World.setCarYawOffset((car.calibYaw || 0) * Math.PI / 180);
+  rebuildShifterBtns(car.gears || DEFAULT_GEARS);
   ENG.notify('🏎 ' + car.name + ' — ' + car.hp + ' HP');
   renderCarList();
 });
-
 document.getElementById('nextCar').addEventListener('click', function() {
   if (carOrder.length === 0) return;
   var idx = activeCar ? carOrder.indexOf(activeCar) : -1;
   idx = (idx + 1) % carOrder.length;
   activeCar = carOrder[idx];
-  applyCarToEngine(carDB[activeCar]);
   var car = carDB[activeCar];
+  applyCarToEngine(car);
   if (car.gltfPath) World.loadCarModel(car.gltfPath, car.texFolder);
   else World.useDefaultCar();
+  World.setCarYawOffset((car.calibYaw || 0) * Math.PI / 180);
+  rebuildShifterBtns(car.gears || DEFAULT_GEARS);
   ENG.notify('🏎 ' + car.name + ' — ' + car.hp + ' HP');
   renderCarList();
 });
 
 // ════════════════════════════════════════════════
-// ENGINE PHYSICS  (exposé globalement via window.ENG)
+// ENGINE MOBILE BUTTON
+// ════════════════════════════════════════════════
+window.toggleEngineMobile = function() {
+  var s = ENG.s;
+  if (s.on) {
+    ENG.stopEngine();
+  } else {
+    // Auto-set conditions for easy mobile start
+    ENG.setClutch(1);
+    ENG.setHandbrake(true);
+    if (s.stalled) ENG.restart();
+    else ENG.startEngine();
+  }
+  updateEngineBtnUI();
+  if (window.Controls) Controls.updateHBUI();
+};
+
+function updateEngineBtnUI() {
+  var btn = document.getElementById('engine-btn');
+  var lbl = document.getElementById('eng-btn-label');
+  if (!btn) return;
+  if (ENG.s.on) {
+    btn.classList.add('on');
+    if (lbl) lbl.textContent = 'STOP';
+  } else {
+    btn.classList.remove('on');
+    if (lbl) lbl.textContent = ENG.s.stalled ? 'RESTART' : 'START';
+  }
+}
+window.updateEngineBtnUI = updateEngineBtnUI;
+
+// ════════════════════════════════════════════════
+// ENGINE PHYSICS
 // ════════════════════════════════════════════════
 window.ENG = (function(){
   var IDLE=850, MAX=7200, STALL=580, RED=6400;
-  var RATIOS={'R':-3.6,'N':0,'1':3.8,'2':2.2,'3':1.5,'4':1.05,'5':0.82};
-  var SPD_MAX_BASE={'R':22,'N':0,'1':32,'2':60,'3':90,'4':135,'5':200};
-  var SPD_MAX = Object.assign({}, SPD_MAX_BASE);
-  var GORD=['R','N','1','2','3','4','5'];
+  // Gears: R, N, and forward gears
+  var _fwdGears = JSON.parse(JSON.stringify(DEFAULT_GEARS));
+  var RATIOS = {};
+  var SPD_MAX = {};
+  var GORD = [];
+
+  function buildGearTables(fwdGears) {
+    _fwdGears = fwdGears || JSON.parse(JSON.stringify(DEFAULT_GEARS));
+    RATIOS = { 'R': -3.6, 'N': 0 };
+    SPD_MAX = { 'R': 22, 'N': 0 };
+    GORD = ['R', 'N'];
+    _fwdGears.forEach(function(g) {
+      RATIOS[g.label]  = g.ratio;
+      SPD_MAX[g.label] = g.spdMax;
+      GORD.push(g.label);
+    });
+  }
+  buildGearTables(_fwdGears);
+
   var _powerMul = 1.0;
   var _gripMul  = 1.0;
 
@@ -824,16 +1282,12 @@ window.ENG = (function(){
     return Math.sin(Math.PI*n)*0.72+0.28;
   }
 
-  // Apply a car profile to physics constants
   function applyProfile(p) {
     MAX   = p.rpmMax || 7200;
     RED   = MAX * 0.89;
     _powerMul = p.powerMul || 1.0;
     _gripMul  = p.gripMul  || 1.0;
-    var vmaxRatio = (p.spdMax5 || 200) / 200;
-    Object.keys(SPD_MAX_BASE).forEach(function(g){
-      SPD_MAX[g] = SPD_MAX_BASE[g] * vmaxRatio;
-    });
+    if (p.gears) buildGearTables(p.gears);
   }
 
   function update(dt){
@@ -884,20 +1338,27 @@ window.ENG = (function(){
       s.speed -= bf2 * dt;
       if(Math.abs(s.speed)<0.05) s.speed=0;
     }
-    var vmaxCap = SPD_MAX['5'] || 200;
+
+    var vmaxCap = _fwdGears.length ? _fwdGears[_fwdGears.length-1].spdMax : 200;
     s.speed = clamp(s.speed, -30, vmaxCap * 1.05);
 
-    // Friction latérale en virage
+    // ── Direction simplifiée — pas de vrille ──
+    // Friction latérale légère proportionnelle à la vitesse et à l'angle roues
     if(Math.abs(s.speed) > 0.5){
+      // Facteur réduit et linéaire (pas de carré = plus de progressivité)
       var steerFactor = Math.abs(s.wheelAngle) / (Math.PI/5);
-      var lateralDrag = steerFactor * steerFactor * 18.0 / _gripMul;
+      var lateralDrag = steerFactor * 8.0 / _gripMul;  // Beaucoup plus faible qu'avant (18 → 8)
       s.speed -= Math.sign(s.speed) * lateralDrag * dt;
     }
 
+    // Rotation de la voiture : taux limité et lissé
     var mwa = Math.PI/5;
     s.wheelAngle = clamp(s.wheelAngle, -mwa, mwa);
-    if(Math.abs(s.speed)>0.15){
-      var turnRate = (s.speed / 3.6) * (s.wheelAngle / 2.8) * 0.055;
+    if(Math.abs(s.speed) > 0.15){
+      // Turnrate réduit et dépend de la vitesse (moins vite en ligne droite = tourne moins)
+      var speedKmh = Math.abs(s.speed);
+      var speedFactor = Math.max(0.1, 1.0 - speedKmh / 180); // Réduit à haute vitesse
+      var turnRate = (s.speed / 3.6) * (s.wheelAngle / 3.2) * 0.038 * speedFactor;
       s.angle += turnRate * dt * 60;
     }
 
@@ -909,6 +1370,7 @@ window.ENG = (function(){
   function _stall(){
     s.stalled=true; s.on=false; s.stallTimer=0; s.stalling=false; s.rpm=0;
     notify('⚠️ Vous avez <b>calé</b> ! Appuyez sur <kbd>E</kbd> pour redémarrer');
+    updateEngineBtnUI();
     var el=document.getElementById('hv-stall');
     if(el){ el.classList.add('sf'); setTimeout(function(){ el.classList.remove('sf'); },1400); }
   }
@@ -918,11 +1380,16 @@ window.ENG = (function(){
     if(s.clutch < 0.82){ notify('Appuyez à fond sur l\'embrayage (<kbd>C</kbd>) d\'abord !'); return false; }
     if(!s.handbrake && s.brake < 0.25){ notify('Serrez le frein à main (<kbd>H</kbd>) avant de démarrer'); return false; }
     s.on=true; s.stalled=false; s.rpm=IDLE; s.gear='N';
+    updateEngineBtnUI();
     notify('Moteur démarré ✓ — Passez en 1ère puis relâchez l\'embrayage doucement');
     return true;
   }
 
-  function stopEngine(){ s.on=false; s.rpm=0; notify('Moteur coupé'); }
+  function stopEngine(){
+    s.on=false; s.rpm=0;
+    updateEngineBtnUI();
+    notify('Moteur coupé');
+  }
   function restart(){ s.stalled=false; s.on=false; startEngine(); }
 
   function setGear(g){
@@ -931,8 +1398,14 @@ window.ENG = (function(){
     if(g==='R' && Math.abs(s.speed)>3){ notify('Arrêtez-vous avant la marche arrière !'); return false; }
     s.gear = g; return true;
   }
-  function shiftUp(){ var i=GORD.indexOf(s.gear); if(i<GORD.length-1) return setGear(GORD[i+1]); }
-  function shiftDown(){ var i=GORD.indexOf(s.gear); if(i>0) return setGear(GORD[i-1]); }
+  function shiftUp(){
+    var i=GORD.indexOf(s.gear);
+    if(i<GORD.length-1) return setGear(GORD[i+1]);
+  }
+  function shiftDown(){
+    var i=GORD.indexOf(s.gear);
+    if(i>0) return setGear(GORD[i-1]);
+  }
 
   function setClutch(v)     { s.clutch     = clamp(v,0,1); }
   function setBrake(v)      { s.brake      = clamp(v,0,1); }
@@ -955,7 +1428,8 @@ window.ENG = (function(){
     setGear, shiftUp, shiftDown,
     setClutch, setBrake, setGas, setHandbrake, setWheelAngle,
     get IDLE(){ return IDLE; }, get MAX(){ return MAX; },
-    get RED(){ return RED; }, get STALL(){ return STALL; }
+    get RED(){ return RED; }, get STALL(){ return STALL; },
+    get GORD(){ return GORD; }
   };
 })();
 
@@ -972,6 +1446,7 @@ window.World = (function(){
   var chunks = {};
   var ROAD_W = 14;
   var gltfLoader = null;
+  var _carYawOffset = 0; // Calibration offset en radians
 
   function seededRng(seed){
     var s=seed;
@@ -1042,7 +1517,6 @@ window.World = (function(){
     });
   }
 
-  // Build default box car
   function buildDefaultCar(){
     carGroup = new THREE.Group();
     wheels = [];
@@ -1079,24 +1553,13 @@ window.World = (function(){
     scene.add(carGroup);
   }
 
-  // Load GLTF model and replace car
   function loadCarModel(gltfPath, texFolder) {
     ENG.notify('<span class="spinner"></span> Chargement du modèle 3D…');
-
-    // Lazy-load GLTFLoader from CDN
     if (!gltfLoader) {
-      // GLTFLoader is not in r128 bundle; use a dynamic import workaround
-      // We'll use the separate CDN script
       var script = document.createElement('script');
       script.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
-      script.onload = function() {
-        gltfLoader = new THREE.GLTFLoader();
-        _loadGLTF(gltfPath, texFolder);
-      };
-      script.onerror = function() {
-        ENG.notify('⚠️ Impossible de charger GLTFLoader — modèle par défaut utilisé');
-        useDefaultCar();
-      };
+      script.onload = function() { gltfLoader = new THREE.GLTFLoader(); _loadGLTF(gltfPath, texFolder); };
+      script.onerror = function() { ENG.notify('⚠️ Impossible de charger GLTFLoader — modèle par défaut utilisé'); useDefaultCar(); };
       document.head.appendChild(script);
     } else {
       _loadGLTF(gltfPath, texFolder);
@@ -1105,79 +1568,63 @@ window.World = (function(){
 
   function _loadGLTF(gltfPath, texFolder) {
     if (!gltfLoader) { useDefaultCar(); return; }
-    // Set texture path if provided
     if (texFolder) {
       var tm = new THREE.LoadingManager();
       tm.setURLModifier(function(url) {
-        // if url is relative filename, prefix with texFolder
-        if (!url.startsWith('http') && !url.startsWith('/') && !url.startsWith('./')) {
-          return texFolder + url;
-        }
+        if (!url.startsWith('http') && !url.startsWith('/') && !url.startsWith('./')) return texFolder + url;
         return url;
       });
       gltfLoader.manager = tm;
     }
-
     gltfLoader.load(gltfPath,
       function(gltf) {
-        // Remove old car
         if (carGroup) scene.remove(carGroup);
         wheels = [];
-
         carGroup = new THREE.Group();
         var model = gltf.scene;
-
-        // Auto-scale to fit roughly ~4m length
         var box = new THREE.Box3().setFromObject(model);
-        var size = new THREE.Vector3();
-        box.getSize(size);
+        var size = new THREE.Vector3(); box.getSize(size);
         var maxDim = Math.max(size.x, size.y, size.z);
         var scale = 4.0 / maxDim;
         model.scale.setScalar(scale);
-
-        // Center at ground level
         box.setFromObject(model);
-        var center = new THREE.Vector3();
-        box.getCenter(center);
+        var center = new THREE.Vector3(); box.getCenter(center);
         model.position.sub(center);
         var newBox = new THREE.Box3().setFromObject(model);
         model.position.y -= newBox.min.y;
-
-        model.traverse(function(child) {
-          if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-          }
-        });
-
+        // Apply calibration yaw
+        model.rotation.y = _carYawOffset;
+        model.traverse(function(child) { if (child.isMesh) { child.castShadow=true; child.receiveShadow=true; } });
         carGroup.add(model);
-
-        // Add invisible wheel groups for steering animation
         var wpos=[[-0.95,0.34,-1.3],[0.95,0.34,-1.3],[-0.95,0.34,1.3],[0.95,0.34,1.3]];
         wpos.forEach(function(pos,i){
-          var wg=new THREE.Group();
-          wg.position.set(pos[0],pos[1],pos[2]);
-          carGroup.add(wg);
-          wheels.push({group:wg,isFront:i<2});
+          var wg=new THREE.Group(); wg.position.set(pos[0],pos[1],pos[2]);
+          carGroup.add(wg); wheels.push({group:wg,isFront:i<2});
         });
-
         scene.add(carGroup);
         ENG.notify('✅ Modèle 3D chargé avec succès !');
       },
-      function(xhr) {
-        var pct = xhr.total ? Math.round(xhr.loaded/xhr.total*100) : '?';
-        ENG.notify('Chargement modèle… ' + pct + '%');
-      },
-      function(err) {
-        ENG.notify('⚠️ Erreur chargement modèle — voiture par défaut');
-        useDefaultCar();
-      }
+      function(xhr){ var pct=xhr.total?Math.round(xhr.loaded/xhr.total*100):'?'; ENG.notify('Chargement modèle… '+pct+'%'); },
+      function(){ ENG.notify('⚠️ Erreur chargement modèle — voiture par défaut'); useDefaultCar(); }
     );
+  }
+
+  function setCarYawOffset(radians) {
+    _carYawOffset = radians;
+    // Apply to existing loaded GLTF model (first child if it's a gltf scene)
+    if (carGroup && carGroup.children.length > 0) {
+      var firstChild = carGroup.children[0];
+      // Only apply to non-wheel groups (the main model)
+      if (firstChild && !(firstChild.userData && firstChild.userData.isWheel)) {
+        firstChild.rotation.y = radians;
+      }
+    }
   }
 
   function useDefaultCar() {
     if (carGroup) scene.remove(carGroup);
     wheels = [];
+    _carYawOffset = 0;
     buildDefaultCar();
   }
 
@@ -1270,7 +1717,7 @@ window.World = (function(){
     });
   }
 
-  return { init, render, nextCam, loadCarModel, useDefaultCar };
+  return { init, render, nextCam, loadCarModel, useDefaultCar, setCarYawOffset };
 })();
 
 // ════════════════════════════════════════════════
@@ -1346,7 +1793,8 @@ window.Controls = (function(){
       if(e.preventDefault) e.preventDefault();
       var a=getAngle(e),d=a-lastA;
       if(d>Math.PI) d-=Math.PI*2; if(d<-Math.PI) d+=Math.PI*2;
-      steerRot=Math.min(SMAX,Math.max(-SMAX,steerRot+d));
+      // Réduire la sensibilité du volant (divisé par 1.5 par rapport à avant)
+      steerRot=Math.min(SMAX,Math.max(-SMAX,steerRot+d*0.65));
       lastA=getAngle(e);
       swEl.style.transform='rotate('+steerRot+'rad)';
       ENG.setWheelAngle(steerRot/SMAX*(Math.PI/5));
@@ -1355,9 +1803,11 @@ window.Controls = (function(){
     window.addEventListener('touchmove',function(e){if(drag){e.preventDefault();applySteer(e);}},{passive:false});
     function endDrag(){
       if(!drag)return;drag=false;
+      // Retour au centre PLUS lent pour éviter l'oscillation
       var start=steerRot,t0=performance.now();
       (function step(now){
-        var t=Math.min(1,(now-t0)/420),et=1-Math.pow(1-t,3);
+        var t=Math.min(1,(now-t0)/600);  // 600ms au lieu de 420ms
+        var et=t*(2-t); // ease-out quadratique (plus doux que cubique)
         steerRot=start*(1-et);
         swEl.style.transform='rotate('+steerRot+'rad)';
         ENG.setWheelAngle(steerRot/SMAX*(Math.PI/5));
@@ -1369,16 +1819,19 @@ window.Controls = (function(){
   }
 
   var held={sl:false,sr:false,gas:false,brake:false};
-  var PEDSTEP=0.09,SSTEP=0.044;
+  var PEDSTEP=0.09,SSTEP=0.038; // SSTEP réduit pour une direction plus douce
 
   function initKeyboard(){
     var down={};
     document.addEventListener('keydown',function(e){
-      // Don't intercept keys when typing in inputs
       if(e.target.tagName==='INPUT') return;
       if(down[e.code])return; down[e.code]=true;
       switch(e.code){
-        case 'KeyE': if(ENG.s.on) ENG.stopEngine(); else { ENG.s.stalled?ENG.restart():ENG.startEngine(); } break;
+        case 'KeyE':
+          if(ENG.s.on) ENG.stopEngine();
+          else { ENG.s.stalled?ENG.restart():ENG.startEngine(); }
+          updateEngineBtnUI();
+          break;
         case 'KeyH': ENG.setHandbrake(!ENG.s.handbrake); updateHBUI(); break;
         case 'ArrowUp':   case 'KeyZ': ENG.shiftUp();   updateGearUI(); break;
         case 'ArrowDown': case 'KeyX': ENG.shiftDown(); updateGearUI(); break;
@@ -1409,8 +1862,9 @@ window.Controls = (function(){
     if(held.sl) steerRot=Math.max(-SMAX,steerRot-SSTEP*60*dt);
     if(held.sr) steerRot=Math.min( SMAX,steerRot+SSTEP*60*dt);
     if(!held.sl&&!held.sr&&steerRot!==0){
-      steerRot+=-Math.sign(steerRot)*SSTEP*28*dt;
-      if(Math.abs(steerRot)<0.02) steerRot=0;
+      // Retour au centre plus progressif
+      steerRot+=-Math.sign(steerRot)*SSTEP*20*dt;
+      if(Math.abs(steerRot)<0.015) steerRot=0;
     }
     if(swEl) swEl.style.transform='rotate('+steerRot+'rad)';
     ENG.setWheelAngle(steerRot/SMAX*(Math.PI/5));
@@ -1521,7 +1975,3 @@ window.addEventListener('DOMContentLoaded',function(){
 </script>
 </body>
 </html>
-HTMLEOF
-echo "Done: $(wc -l < /mnt/user-data/outputs/simulateur_conduite.html) lines"
-Output
-Done: 1523 lines
