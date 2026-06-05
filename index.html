@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kylfin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            max-width: 250px;
+        }
+        
+        #controls h3 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+        
+        #speed {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        #debugBtn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.3);
+            color: white;
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        #debugBtn:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+        
+        #editorBtn {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: rgba(255, 165, 0, 0.7);
+            color: white;
+            border: 2px solid rgba(255, 165, 0, 0.9);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: none;
+        }
+        
+        #editorBtn:hover {
+            background: rgba(255, 165, 0, 0.9);
+        }
+        
+        #editorPanel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 280px;
+            display: none;
+            z-index: 100;
+        }
+        
+        #editorPanel.active {
+            display: block;
+        }
+        
+        #editorPanel h3 {
+            margin-bottom: 15px;
+            color: #ffa500;
+            border-bottom: 2px solid #ffa500;
+            padding-bottom: 8px;
+        }
+        
+        .editor-btn {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .editor-btn.primary {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .editor-btn.primary:hover {
+            background: #45a049;
+        }
+        
+        .editor-btn.active {
+            background: #ffa500;
+            color: white;
+        }
+        
+        .editor-btn.danger {
+            background: #f44336;
+            color: white;
+        }
+        
+        .editor-btn.danger:hover {
+            background: #da190b;
+        }
+        
+        #editorInfo {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            background: rgba(255, 165, 0, 0.9);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+            max-width: 300px;
+        }
+        
+        #editorInfo.active {
+            display: block;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+            color: white;
+        }
+        
+        .modal-content h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        
+        .modal-content input,
+        .modal-content button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .modal-content input {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .modal-content button {
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .modal-content button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .modal-content button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        #debugPanel {
+            background: #1a1a1a;
+            padding: 20px;
+        }
+        
+        #debugPanel h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+        
+        .slider-container {
+            margin: 20px 0;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .slider-value {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .close-btn {
+            background: #ff6b6b !important;
+            margin-top: 10px;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .success {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px 50px;
+            border-radius: 15px;
+            font-size: 24px;
+            text-align: center;
+            z-index: 999;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        #playerCount {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .player-label {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        /* Contrôles mobiles */
+        #mobileControls {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        @media (max-width: 768px), (pointer: coarse) {
+            #mobileControls {
+                display: block;
+            }
+            
+            #controls {
+                font-size: 11px;
+                padding: 10px;
+                max-width: 180px;
+            }
+        }
+        
+        /* Joystick */
+        #joystickContainer {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 150px;
+            height: 150px;
+            pointer-events: all;
+        }
+        
+        #joystickBase {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.3) 100%);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        
+        #joystickStick {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(200,200,200,0.6) 100%);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            transition: all 0.1s ease;
+        }
+        
+        #joystickStick.active {
+            background: radial-gradient(circle, rgba(76,175,80,0.9) 0%, rgba(56,142,60,0.7) 100%);
+            border-color: rgba(76,175,80,1);
+        }
+        
+        /* Boutons de gauche */
+        #leftButtons {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            pointer-events: all;
+        }
+        
+        .mobile-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.4) 100%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+            transition: all 0.1s ease;
+        }
+        
+        .mobile-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        }
+        
+        .mobile-btn .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .mobile-btn .label {
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        
+        #accelerateBtn {
+            background: radial-gradient(circle, rgba(76,175,80,0.5) 0%, rgba(56,142,60,0.4) 100%);
+            border-color: rgba(76,175,80,0.8);
+        }
+        
+        #accelerateBtn.active {
+            background: radial-gradient(circle, rgba(76,175,80,0.9) 0%, rgba(56,142,60,0.7) 100%);
+            border-color: rgba(76,175,80,1);
+            box-shadow: 0 0 20px rgba(76,175,80,0.6);
+        }
+        
+        #brakeBtn {
+            background: radial-gradient(circle, rgba(255,152,0,0.5) 0%, rgba(230,81,0,0.4) 100%);
+            border-color: rgba(255,152,0,0.8);
+        }
+        
+        #brakeBtn.active {
+            background: radial-gradient(circle, rgba(255,152,0,0.9) 0%, rgba(230,81,0,0.7) 100%);
+            border-color: rgba(255,152,0,1);
+            box-shadow: 0 0 20px rgba(255,152,0,0.6);
+        }
+        
+        #parkBrakeBtn {
+            background: radial-gradient(circle, rgba(244,67,54,0.5) 0%, rgba(198,40,40,0.4) 100%);
+            border-color: rgba(244,67,54,0.8);
+        }
+        
+        #parkBrakeBtn.active {
+            background: radial-gradient(circle, rgba(244,67,54,0.9) 0%, rgba(198,40,40,0.7) 100%);
+            border-color: rgba(244,67,54,1);
+            box-shadow: 0 0 20px rgba(244,67,54,0.6);
+        }
+        
+        /* Indicateur de frein de parking */
+        #parkBrakeIndicator {
+            position: absolute;
+            top: 120px;
+            right: 20px;
+            background: rgba(244,67,54,0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+            animation: pulse 1s infinite;
+        }
+        
+        #parkBrakeIndicator.active {
+            display: block;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">Initialisation...</div>
+    
+    <button id="debugBtn" class="hidden">🔧 Debug</button>
+    <button id="editorBtn" class="hidden">🛠️ MODE ÉDITEUR</button>
+    
+    <!-- Panneau éditeur -->
+    <div id="editorPanel">
+        <h3>🛠️ Mode Éditeur</h3>
+        <button class="editor-btn primary" id="toggleCameraBtn">📷 Vue Top-Down</button>
+        <button class="editor-btn" id="addRailBtn">🛤️ Ajouter Rails</button>
+        <button class="editor-btn danger" id="deleteRailBtn">🗑️ Supprimer Tous les Rails</button>
+        <button class="editor-btn danger" id="exitEditorBtn">❌ Quitter Éditeur</button>
+    </div>
+    
+    <div id="editorInfo">
+        <strong>Mode Éditeur Actif</strong><br>
+        Cliquez pour placer des points de rail
+    </div>
+    
+    <div id="controls" class="hidden">
+        <h3>🎮 Contrôles</h3>
+        <div><strong>Z / ↑</strong> - Avancer</div>
+        <div><strong>S / ↓</strong> - Reculer</div>
+        <div><strong>Q / ←</strong> - Tourner gauche</div>
+        <div><strong>D / →</strong> - Tourner droite</div>
+        <div><strong>Espace</strong> - Frein</div>
+        <div><strong>Souris</strong> - Bouger caméra</div>
+        <div><strong>Molette</strong> - Zoom</div>
+    </div>
+    
+    <div id="speed" class="hidden">Vitesse: <span id="speedValue">0</span> km/h</div>
+    <div id="playerCount" class="hidden">Joueurs: <span id="playerCountValue">0</span></div>
+    <div id="parkBrakeIndicator">🅿️ FREIN À MAIN</div>
+    
+    <!-- Contrôles mobiles -->
+    <div id="mobileControls">
+        <!-- Joystick à droite -->
+        <div id="joystickContainer">
+            <div id="joystickBase"></div>
+            <div id="joystickStick"></div>
+        </div>
+        
+        <!-- Boutons à gauche -->
+        <div id="leftButtons">
+            <div id="brakeBtn" class="mobile-btn">
+                <div class="icon">⬇️</div>
+                <div class="label">Frein</div>
+            </div>
+            <div id="parkBrakeBtn" class="mobile-btn">
+                <div class="icon">🅿️</div>
+                <div class="label">Park</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de connexion -->
+    <div id="loginModal" class="modal active">
+        <div class="modal-content">
+            <h2>🎮 Bienvenue</h2>
+            <input type="text" id="pseudoInput" placeholder="Entre ton pseudo" maxlength="15">
+            <button id="loginBtn">Rejoindre la partie</button>
+            <div id="loginError" class="error hidden"></div>
+        </div>
+    </div>
+    
+    <!-- Modal de debug -->
+    <div id="debugModal" class="modal">
+        <div class="modal-content">
+            <div id="debugPanel">
+                <h3>⚙️ Panneau Debug</h3>
+                <div class="slider-container">
+                    <label>
+                        Échelle du modèle: <span class="slider-value" id="scaleValue">1.0</span>
+                    </label>
+                    <input type="range" id="scaleSlider" min="0.1" max="100" step="0.5" value="1">
+                </div>
+                <div class="slider-container">
+                    <label>
+                        Rotation du modèle (°): <span class="slider-value" id="rotationValue">0</span>
+                    </label>
+                    <input type="range" id="rotationSlider" min="0" max="360" step="1" value="0">
+                </div>
+                <div class="slider-container">
+                    <label>
+                        Vitesse maximale: <span class="slider-value" id="speedValue">20</span>
+                    </label>
+                    <input type="range" id="speedSlider" min="5" max="200" step="5" value="20">
+                </div>
+                <button id="saveScaleBtn">💾 Sauvegarder les réglages</button>
+                <div id="saveMessage" class="hidden"></div>
+                <button class="close-btn" id="closeDebugBtn">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxDzLbCnqYYVknoyHMzbE0gB_SRVLpgiw",
+            authDomain: "kyky-c3471.firebaseapp.com",
+            databaseURL: "https://kyky-c3471-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "kyky-c3471",
+            storageBucket: "kyky-c3471.firebasestorage.app",
+            messagingSenderId: "658643330578",
+            appId: "1:658643330578:web:758dc26d5504a503e39acb",
+            measurementId: "G-245RE41YQK"
+        };
+        
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Variables globales
+        let currentPlayer = {
+            id: null,
+            pseudo: null
+        };
+        let otherPlayers = {};
+        let playerMeshes = {};
+        let modelScale = 1.0;
+        let modelRotationOffset = 0;
+        let maxSpeed = 20;
+        
+        // Charger l'échelle du modèle depuis Firebase
+        database.ref('scale/base').once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                modelScale = parseFloat(snapshot.val());
+                console.log('Échelle chargée:', modelScale);
+            }
+        });
+        
+        // Charger la rotation du modèle depuis Firebase
+        database.ref('rotation/base').once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                modelRotationOffset = parseFloat(snapshot.val());
+                console.log('Rotation chargée:', modelRotationOffset);
+            }
+        });
+        
+        // Charger la vitesse maximale depuis Firebase
+        database.ref('speed/max').once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                maxSpeed = parseFloat(snapshot.val());
+                carState.maxSpeed = maxSpeed;
+                console.log('Vitesse max chargée:', maxSpeed);
+            }
+        });
+        
+        // Gestion de la connexion
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const pseudo = document.getElementById('pseudoInput').value.trim();
+            if (pseudo.length < 2) {
+                showError('loginError', 'Pseudo trop court (min 2 caractères)');
+                return;
+            }
+            
+            currentPlayer.pseudo = pseudo;
+            currentPlayer.id = 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            // Vérifier si c'est Kyky pour afficher le bouton éditeur
+            if (pseudo.toLowerCase() === 'kyky') {
+                document.getElementById('editorBtn').classList.remove('hidden');
+            }
+            
+            // Créer l'entrée du joueur dans Firebase
+            database.ref('players/' + currentPlayer.id).set({
+                pseudo: currentPlayer.pseudo,
+                x: 0,
+                y: 0.5,
+                z: 0,
+                rotation: 0,
+                timestamp: Date.now()
+            }).then(() => {
+                document.getElementById('loginModal').classList.remove('active');
+                document.getElementById('controls').classList.remove('hidden');
+                document.getElementById('speed').classList.remove('hidden');
+                document.getElementById('playerCount').classList.remove('hidden');
+                document.getElementById('debugBtn').classList.remove('hidden');
+                startGame();
+            });
+            
+            // Supprimer le joueur à la déconnexion
+            database.ref('players/' + currentPlayer.id).onDisconnect().remove();
+        });
+        
+        // Gestion du debug
+        document.getElementById('debugBtn').addEventListener('click', () => {
+            document.getElementById('debugModal').classList.add('active');
+            document.getElementById('scaleSlider').value = modelScale;
+            document.getElementById('scaleValue').textContent = modelScale.toFixed(1);
+            document.getElementById('rotationSlider').value = modelRotationOffset;
+            document.getElementById('rotationValue').textContent = modelRotationOffset.toFixed(0);
+            document.getElementById('speedSlider').value = maxSpeed;
+            document.getElementById('speedValue').textContent = maxSpeed.toFixed(0);
+        });
+        
+        document.getElementById('scaleSlider').addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            document.getElementById('scaleValue').textContent = value.toFixed(1);
+            
+            // Mise à jour en temps réel de l'échelle
+            if (carBody && car) {
+                car.scale.set(value, value, value);
+            }
+        });
+        
+        document.getElementById('rotationSlider').addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            document.getElementById('rotationValue').textContent = value.toFixed(0);
+            
+            // Mise à jour en temps réel de la rotation
+            if (carBody && car) {
+                car.rotation.y = (value * Math.PI) / 180;
+            }
+        });
+        
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = value.toFixed(0);
+            
+            // Mise à jour en temps réel de la vitesse max
+            carState.maxSpeed = value;
+        });
+        
+        document.getElementById('saveScaleBtn').addEventListener('click', () => {
+            const newScale = parseFloat(document.getElementById('scaleSlider').value);
+            const newRotation = parseFloat(document.getElementById('rotationSlider').value);
+            const newMaxSpeed = parseFloat(document.getElementById('speedSlider').value);
+            
+            Promise.all([
+                database.ref('scale/base').set(newScale),
+                database.ref('rotation/base').set(newRotation),
+                database.ref('speed/max').set(newMaxSpeed)
+            ]).then(() => {
+                modelScale = newScale;
+                modelRotationOffset = newRotation;
+                maxSpeed = newMaxSpeed;
+                carState.maxSpeed = newMaxSpeed;
+                
+                const msg = document.getElementById('saveMessage');
+                msg.textContent = '✓ Réglages sauvegardés!';
+                msg.className = 'success';
+                msg.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    msg.classList.add('hidden');
+                }, 3000);
+            });
+        });
+        
+        document.getElementById('closeDebugBtn').addEventListener('click', () => {
+            document.getElementById('debugModal').classList.remove('active');
+        });
+        
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 3000);
+        }
+        
+        // Variables pour le mode éditeur
+        let isEditorMode = false;
+        let isTopDownView = false;
+        let isAddingRail = false;
+        let currentRailPoints = [];
+        let railMeshes = {};
+        let tempMarkers = [];
+        let currentRailMesh = null;
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        
+        // Configuration de la scène Three.js
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB);
+        scene.fog = new THREE.Fog(0x87CEEB, 50, 200);
+        
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+        
+        // Lumières
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(50, 50, 50);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.camera.left = -50;
+        directionalLight.shadow.camera.right = 50;
+        directionalLight.shadow.camera.top = 50;
+        directionalLight.shadow.camera.bottom = -50;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        scene.add(directionalLight);
+        
+        // Terrain
+        const groundGeometry = new THREE.PlaneGeometry(200, 200, 100, 100);
+        const vertices = groundGeometry.attributes.position.array;
+        for (let i = 0; i < vertices.length; i += 3) {
+            vertices[i + 2] = Math.random() * 0.5 - 0.25;
+        }
+        groundGeometry.attributes.position.needsUpdate = true;
+        groundGeometry.computeVertexNormals();
+        
+        const grassTexture = createGrassTexture();
+        const groundMaterial = new THREE.MeshLambertMaterial({ 
+            map: grassTexture,
+            side: THREE.DoubleSide
+        });
+        
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+        
+        function createGrassTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#4a7c2c';
+            ctx.fillRect(0, 0, 512, 512);
+            
+            for (let i = 0; i < 5000; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 512;
+                const shade = Math.random() * 40 - 20;
+                ctx.fillStyle = `rgb(${74 + shade}, ${124 + shade}, ${44 + shade})`;
+                ctx.fillRect(x, y, 2, 2);
+            }
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(20, 20);
+            return texture;
+        }
+        
+        // Pas d'obstacles
+        const obstacles = [];
+        
+        // Variables de la voiture
+        let car = null;
+        let carBody = null;
+        const carState = {
+            velocity: new THREE.Vector3(0, 0, 0),
+            position: new THREE.Vector3(0, 0.5, 0),
+            rotation: 0,
+            speed: 0,
+            maxSpeed: 20,
+            acceleration: 0.15,
+            deceleration: 0.08,
+            turnSpeed: 0.03,
+            friction: 0.95
+        };
+        
+        // Chargement du modèle
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            'jesco.gltf',
+            function(gltf) {
+                car = gltf.scene;
+                
+                const box = new THREE.Box3().setFromObject(car);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+                
+                car.position.sub(center);
+                car.position.y += size.y / 2;
+                
+                // Appliquer l'échelle depuis Firebase
+                car.scale.set(modelScale, modelScale, modelScale);
+                
+                // Appliquer la rotation depuis Firebase
+                car.rotation.y = (modelRotationOffset * Math.PI) / 180;
+                
+                carBody = new THREE.Group();
+                carBody.add(car);
+                carBody.position.copy(carState.position);
+                
+                car.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
+                });
+                
+                scene.add(carBody);
+                
+                document.getElementById('loading').classList.add('hidden');
+                console.log('Modèle chargé avec succès!');
+            },
+            undefined,
+            function(error) {
+                console.error('Erreur:', error);
+                document.getElementById('loading').innerHTML = 'Erreur: jesco.gltf non trouvé';
+            }
+        );
+        
+        // Position caméra
+        camera.position.set(0, 5, 10);
+        camera.lookAt(0, 0, 0);
+        
+        const orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+        orbitControls.enableDamping = true;
+        orbitControls.dampingFactor = 0.05;
+        orbitControls.minDistance = 5;
+        orbitControls.maxDistance = 30;
+        orbitControls.maxPolarAngle = Math.PI / 2.2;
+        
+        // Contrôles clavier
+        const keys = {
+            forward: false,
+            backward: false,
+            left: false,
+            right: false,
+            brake: false,
+            parkBrake: false
+        };
+        
+        // Variables pour le joystick
+        let joystickActive = false;
+        let joystickAngle = 0;
+        let joystickDistance = 0;
+        const joystickMaxDistance = 40;
+        
+        // Gestion du joystick tactile
+        const joystickContainer = document.getElementById('joystickContainer');
+        const joystickStick = document.getElementById('joystickStick');
+        
+        function handleJoystickStart(e) {
+            e.preventDefault();
+            joystickActive = true;
+            joystickStick.classList.add('active');
+            handleJoystickMove(e);
+        }
+        
+        function handleJoystickMove(e) {
+            if (!joystickActive) return;
+            e.preventDefault();
+            
+            const touch = e.touches ? e.touches[0] : e;
+            const rect = joystickContainer.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const deltaX = touch.clientX - centerX;
+            const deltaY = touch.clientY - centerY;
+            
+            joystickDistance = Math.min(Math.sqrt(deltaX * deltaX + deltaY * deltaY), joystickMaxDistance);
+            joystickAngle = Math.atan2(deltaY, deltaX);
+            
+            const stickX = Math.cos(joystickAngle) * joystickDistance;
+            const stickY = Math.sin(joystickAngle) * joystickDistance;
+            
+            joystickStick.style.transform = `translate(calc(-50% + ${stickX}px), calc(-50% + ${stickY}px))`;
+            
+            // Convertir en commandes de direction
+            const normalizedDistance = joystickDistance / joystickMaxDistance;
+            
+            // Gauche/Droite basé sur l'axe X
+            if (normalizedDistance > 0.2) {
+                const normalizedX = deltaX / joystickMaxDistance;
+                
+                if (normalizedX < -0.2) {
+                    // Gauche
+                    keys.left = true;
+                    keys.right = false;
+                } else if (normalizedX > 0.2) {
+                    // Droite
+                    keys.right = true;
+                    keys.left = false;
+                } else {
+                    keys.left = false;
+                    keys.right = false;
+                }
+                
+                // Avancer/Reculer basé sur l'axe Y
+                const normalizedY = deltaY / joystickMaxDistance;
+                
+                if (normalizedY < -0.2) {
+                    // Haut = Avancer
+                    keys.forward = true;
+                    keys.backward = false;
+                } else if (normalizedY > 0.2) {
+                    // Bas = Reculer
+                    keys.backward = true;
+                    keys.forward = false;
+                } else {
+                    keys.forward = false;
+                    keys.backward = false;
+                }
+            } else {
+                keys.left = false;
+                keys.right = false;
+                keys.forward = false;
+                keys.backward = false;
+            }
+        }
+        
+        function handleJoystickEnd(e) {
+            e.preventDefault();
+            joystickActive = false;
+            joystickStick.classList.remove('active');
+            joystickStick.style.transform = 'translate(-50%, -50%)';
+            joystickDistance = 0;
+            keys.left = false;
+            keys.right = false;
+            keys.forward = false;
+            keys.backward = false;
+        }
+        
+        // Événements tactiles pour le joystick
+        joystickContainer.addEventListener('touchstart', handleJoystickStart, { passive: false });
+        joystickContainer.addEventListener('touchmove', handleJoystickMove, { passive: false });
+        joystickContainer.addEventListener('touchend', handleJoystickEnd, { passive: false });
+        joystickContainer.addEventListener('touchcancel', handleJoystickEnd, { passive: false });
+        
+        // Support souris pour tester sur desktop
+        joystickContainer.addEventListener('mousedown', handleJoystickStart);
+        document.addEventListener('mousemove', (e) => {
+            if (joystickActive) handleJoystickMove(e);
+        });
+        document.addEventListener('mouseup', handleJoystickEnd);
+        
+        // Bouton Frein
+        const brakeBtn = document.getElementById('brakeBtn');
+        brakeBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.brake = true;
+            brakeBtn.classList.add('active');
+        }, { passive: false });
+        
+        brakeBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.brake = false;
+            brakeBtn.classList.remove('active');
+        }, { passive: false });
+        
+        // Support souris
+        brakeBtn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            keys.brake = true;
+            brakeBtn.classList.add('active');
+        });
+        
+        brakeBtn.addEventListener('mouseup', (e) => {
+            e.preventDefault();
+            keys.brake = false;
+            brakeBtn.classList.remove('active');
+        });
+        
+        // Bouton Frein de parking (toggle)
+        const parkBrakeBtn = document.getElementById('parkBrakeBtn');
+        const parkBrakeIndicator = document.getElementById('parkBrakeIndicator');
+        
+        parkBrakeBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+        
+        parkBrakeBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.parkBrake = !keys.parkBrake;
+            
+            if (keys.parkBrake) {
+                parkBrakeBtn.classList.add('active');
+                parkBrakeIndicator.classList.add('active');
+            } else {
+                parkBrakeBtn.classList.remove('active');
+                parkBrakeIndicator.classList.remove('active');
+            }
+        }, { passive: false });
+        
+        // Support souris
+        parkBrakeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            keys.parkBrake = !keys.parkBrake;
+            
+            if (keys.parkBrake) {
+                parkBrakeBtn.classList.add('active');
+                parkBrakeIndicator.classList.add('active');
+            } else {
+                parkBrakeBtn.classList.remove('active');
+                parkBrakeIndicator.classList.remove('active');
+            }
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'z':
+                case 'arrowup':
+                    keys.forward = true;
+                    break;
+                case 's':
+                case 'arrowdown':
+                    keys.backward = true;
+                    break;
+                case 'q':
+                case 'arrowleft':
+                    keys.left = true;
+                    break;
+                case 'd':
+                case 'arrowright':
+                    keys.right = true;
+                    break;
+                case ' ':
+                    keys.brake = true;
+                    e.preventDefault();
+                    break;
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'z':
+                case 'arrowup':
+                    keys.forward = false;
+                    break;
+                case 's':
+                case 'arrowdown':
+                    keys.backward = false;
+                    break;
+                case 'q':
+                case 'arrowleft':
+                    keys.left = false;
+                    break;
+                case 'd':
+                case 'arrowright':
+                    keys.right = false;
+                    break;
+                case ' ':
+                    keys.brake = false;
+                    break;
+            }
+        });
+        
+        // Fonction pour créer un label de pseudo
+        function createPlayerLabel(pseudo) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 256;
+            canvas.height = 64;
+            
+            context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            
+            context.font = 'Bold 24px Arial';
+            context.fillStyle = 'white';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(pseudo, 128, 32);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(4, 1, 1);
+            sprite.position.y = 3;
+            
+            return sprite;
+        }
+        
+        // Créer une voiture pour un autre joueur
+        function createOtherPlayerCar(pseudo) {
+            const group = new THREE.Group();
+            
+            // Charger le modèle GLTF pour cet autre joueur
+            const otherLoader = new THREE.GLTFLoader();
+            otherLoader.load(
+                'jesco.gltf',
+                function(gltf) {
+                    const otherCar = gltf.scene.clone();
+                    
+                    // Centrer le modèle
+                    const box = new THREE.Box3().setFromObject(otherCar);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    otherCar.position.sub(center);
+                    otherCar.position.y += size.y / 2;
+                    
+                    // Appliquer l'échelle et rotation depuis Firebase
+                    otherCar.scale.set(modelScale, modelScale, modelScale);
+                    otherCar.rotation.y = (modelRotationOffset * Math.PI) / 180;
+                    
+                    otherCar.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+                    
+                    group.add(otherCar);
+                },
+                undefined,
+                function(error) {
+                    console.error('Erreur chargement autre joueur:', error);
+                    // Fallback: créer un cube si le modèle ne charge pas
+                    const geometry = new THREE.BoxGeometry(2, 1, 3);
+                    const material = new THREE.MeshLambertMaterial({ 
+                        color: 0x888888 
+                    });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.castShadow = true;
+                    group.add(mesh);
+                }
+            );
+            
+            const label = createPlayerLabel(pseudo);
+            group.add(label);
+            
+            scene.add(group);
+            return group;
+        }
+        
+        // ===== CODE MODE ÉDITEUR =====
+        
+        // Fonction pour créer un rail 3D
+        function createRailMesh(points) {
+            if (points.length < 2) return null;
+            
+            const curve = new THREE.CatmullRomCurve3(
+                points.map(p => new THREE.Vector3(p.x, p.y, p.z))
+            );
+            
+            const railGroup = new THREE.Group();
+            
+            // Créer les traverses et rails
+            const segments = Math.max(10, points.length * 5);
+            const curvePoints = curve.getPoints(segments);
+            
+            // Matériaux
+            const woodMaterial = new THREE.MeshLambertMaterial({ color: 0x4a2511 });
+            const steelMaterial = new THREE.MeshLambertMaterial({ color: 0x808080 });
+            
+            for (let i = 0; i < curvePoints.length; i++) {
+                const point = curvePoints[i];
+                
+                // Traverses en bois tous les 3 segments
+                if (i % 3 === 0) {
+                    const sleeperGeometry = new THREE.BoxGeometry(0.4, 0.1, 2.5);
+                    const sleeper = new THREE.Mesh(sleeperGeometry, woodMaterial);
+                    sleeper.position.copy(point);
+                    sleeper.position.y = 0.05;
+                    
+                    if (i < curvePoints.length - 1) {
+                        const direction = new THREE.Vector3()
+                            .subVectors(curvePoints[i + 1], point)
+                            .normalize();
+                        sleeper.rotation.y = Math.atan2(direction.x, direction.z);
+                    }
+                    
+                    sleeper.castShadow = true;
+                    railGroup.add(sleeper);
+                }
+            }
+            
+            // Rails gauche et droite
+            for (let side of [-0.7, 0.7]) {
+                const railPoints = curvePoints.map(p => {
+                    const offset = new THREE.Vector3(side, 0.15, 0);
+                    return p.clone().add(offset);
+                });
+                
+                const railCurve = new THREE.CatmullRomCurve3(railPoints);
+                const railGeometry = new THREE.TubeGeometry(railCurve, segments, 0.05, 8, false);
+                const rail = new THREE.Mesh(railGeometry, steelMaterial);
+                rail.castShadow = true;
+                railGroup.add(rail);
+            }
+            
+            return railGroup;
+        }
+        
+        // Charger les rails depuis Firebase
+        function loadRails() {
+            database.ref('rails').on('value', (snapshot) => {
+                const rails = snapshot.val();
+                
+                // Supprimer les anciens meshes
+                Object.values(railMeshes).forEach(mesh => {
+                    scene.remove(mesh);
+                });
+                railMeshes = {};
+                
+                if (rails) {
+                    Object.keys(rails).forEach(railId => {
+                        const railData = rails[railId];
+                        const mesh = createRailMesh(railData.points);
+                        if (mesh) {
+                            railMeshes[railId] = mesh;
+                            scene.add(mesh);
+                        }
+                    });
+                }
+            });
+        }
+        
+        // Charger les rails au démarrage
+        loadRails();
+        
+        // Gestion des clics pour placer des rails
+        renderer.domElement.addEventListener('click', (event) => {
+            if (!isEditorMode || !isAddingRail) return;
+            
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            
+            // Créer un plan au niveau du sol
+            const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+            const intersectPoint = new THREE.Vector3();
+            raycaster.ray.intersectPlane(plane, intersectPoint);
+            
+            if (intersectPoint) {
+                currentRailPoints.push({
+                    x: intersectPoint.x,
+                    y: 0.1,
+                    z: intersectPoint.z
+                });
+                
+                // Créer un marqueur visuel
+                const markerGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+                const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+                marker.position.copy(intersectPoint);
+                marker.position.y = 0.3;
+                scene.add(marker);
+                tempMarkers.push(marker);
+                
+                // Si on a au moins 2 points, créer/mettre à jour le rail
+                if (currentRailPoints.length >= 2) {
+                    updateCurrentRail();
+                }
+            }
+        });
+        
+        function updateCurrentRail() {
+            if (currentRailMesh) {
+                scene.remove(currentRailMesh);
+            }
+            
+            currentRailMesh = createRailMesh(currentRailPoints);
+            if (currentRailMesh) {
+                scene.add(currentRailMesh);
+            }
+        }
+        
+        function saveCurrentRail() {
+            if (currentRailPoints.length < 2) return;
+            
+            const railId = 'rail_' + Date.now();
+            const railData = {
+                points: currentRailPoints,
+                createdBy: currentPlayer.pseudo,
+                timestamp: Date.now()
+            };
+            
+            database.ref('rails/' + railId).set(railData);
+            
+            // Nettoyer
+            currentRailPoints = [];
+            currentRailMesh = null;
+            tempMarkers.forEach(marker => scene.remove(marker));
+            tempMarkers = [];
+        }
+        
+        // Bouton pour activer le mode éditeur
+        document.getElementById('editorBtn').addEventListener('click', () => {
+            isEditorMode = true;
+            document.getElementById('editorPanel').classList.add('active');
+            document.getElementById('editorInfo').classList.add('active');
+            document.getElementById('editorBtn').style.display = 'none';
+        });
+        
+        // Boutons du mode éditeur
+        document.getElementById('toggleCameraBtn').addEventListener('click', () => {
+            isTopDownView = !isTopDownView;
+            
+            if (isTopDownView) {
+                camera.position.set(0, 100, 0);
+                camera.lookAt(0, 0, 0);
+                orbitControls.enabled = true;
+                orbitControls.enableRotate = false;
+                orbitControls.mouseButtons = {
+                    LEFT: THREE.MOUSE.PAN,
+                    MIDDLE: THREE.MOUSE.DOLLY,
+                    RIGHT: THREE.MOUSE.PAN
+                };
+                document.getElementById('toggleCameraBtn').textContent = '🎮 Vue Normale';
+            } else {
+                orbitControls.enabled = false;
+                document.getElementById('toggleCameraBtn').textContent = '📷 Vue Top-Down';
+            }
+        });
+        
+        document.getElementById('addRailBtn').addEventListener('click', () => {
+            if (isAddingRail && currentRailPoints.length >= 2) {
+                // Sauvegarder le rail en cours
+                saveCurrentRail();
+            }
+            
+            isAddingRail = !isAddingRail;
+            
+            if (!isAddingRail) {
+                // Nettoyer si on annule
+                currentRailPoints = [];
+                if (currentRailMesh) {
+                    scene.remove(currentRailMesh);
+                    currentRailMesh = null;
+                }
+                tempMarkers.forEach(marker => scene.remove(marker));
+                tempMarkers = [];
+            }
+            
+            const btn = document.getElementById('addRailBtn');
+            btn.classList.toggle('active', isAddingRail);
+            
+            const info = document.getElementById('editorInfo');
+            if (isAddingRail) {
+                info.innerHTML = '<strong>Mode Ajout de Rails</strong><br>Cliquez pour placer des points';
+            } else {
+                info.innerHTML = '<strong>Mode Éditeur Actif</strong><br>Utilisez les boutons pour créer des rails';
+            }
+        });
+        
+        document.getElementById('deleteRailBtn').addEventListener('click', () => {
+            if (confirm('Voulez-vous vraiment supprimer TOUS les rails ?')) {
+                database.ref('rails').remove();
+            }
+        });
+        
+        document.getElementById('exitEditorBtn').addEventListener('click', () => {
+            if (isAddingRail && currentRailPoints.length >= 2) {
+                if (confirm('Sauvegarder le rail en cours avant de quitter ?')) {
+                    saveCurrentRail();
+                }
+            }
+            
+            isEditorMode = false;
+            isTopDownView = false;
+            isAddingRail = false;
+            orbitControls.enabled = false;
+            document.getElementById('editorPanel').classList.remove('active');
+            document.getElementById('editorInfo').classList.remove('active');
+            document.getElementById('editorBtn').style.display = 'block';
+            
+            // Nettoyer
+            currentRailPoints = [];
+            if (currentRailMesh) {
+                scene.remove(currentRailMesh);
+                currentRailMesh = null;
+            }
+            tempMarkers.forEach(marker => scene.remove(marker));
+            tempMarkers = [];
+        });
+        
+        // ===== FIN CODE MODE ÉDITEUR =====
+        
+        // Écouter les autres joueurs
+        function startGame() {
+            database.ref('players').on('value', (snapshot) => {
+                const players = snapshot.val();
+                let count = 0;
+                
+                if (players) {
+                    Object.keys(players).forEach(playerId => {
+                        count++;
+                        
+                        if (playerId !== currentPlayer.id) {
+                            const playerData = players[playerId];
+                            
+                            if (!playerMeshes[playerId]) {
+                                playerMeshes[playerId] = createOtherPlayerCar(playerData.pseudo);
+                            }
+                            
+                            // Mettre à jour la position
+                            playerMeshes[playerId].position.set(
+                                playerData.x,
+                                playerData.y,
+                                playerData.z
+                            );
+                            playerMeshes[playerId].rotation.y = playerData.rotation;
+                        }
+                    });
+                    
+                    // Nettoyer les joueurs déconnectés
+                    Object.keys(playerMeshes).forEach(playerId => {
+                        if (!players[playerId]) {
+                            scene.remove(playerMeshes[playerId]);
+                            delete playerMeshes[playerId];
+                        }
+                    });
+                }
+                
+                document.getElementById('playerCountValue').textContent = count;
+            });
+        }
+        
+        // Mise à jour de la position dans Firebase
+        let lastUpdate = 0;
+        function updatePlayerPosition() {
+            const now = Date.now();
+            if (now - lastUpdate > 50 && currentPlayer.id && carBody) { // 20 fois par seconde
+                database.ref('players/' + currentPlayer.id).update({
+                    x: carBody.position.x,
+                    y: carBody.position.y,
+                    z: carBody.position.z,
+                    rotation: carState.rotation,
+                    timestamp: now
+                });
+                lastUpdate = now;
+            }
+        }
+        
+        // Collision
+        function checkCollisions() {
+            if (!carBody) return;
+            
+            const carPos = carBody.position;
+            const carRadius = 1.5;
+            
+            for (let obstacle of obstacles) {
+                const dx = carPos.x - obstacle.x;
+                const dz = carPos.z - obstacle.z;
+                const distance = Math.sqrt(dx * dx + dz * dz);
+                
+                if (distance < (carRadius + obstacle.radius)) {
+                    const angle = Math.atan2(dz, dx);
+                    const pushDistance = (carRadius + obstacle.radius) - distance;
+                    
+                    carBody.position.x += Math.cos(angle) * pushDistance;
+                    carBody.position.z += Math.sin(angle) * pushDistance;
+                    
+                    carState.speed *= 0.5;
+                    carState.velocity.multiplyScalar(0.5);
+                    
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (carBody && !isEditorMode) {
+                // Frein de parking bloque tout mouvement
+                if (keys.parkBrake) {
+                    carState.speed *= 0.85; // Ralentissement rapide
+                    if (Math.abs(carState.speed) < 0.1) {
+                        carState.speed = 0;
+                    }
+                } else {
+                    // Accélération normale
+                    if (keys.forward) {
+                        carState.speed = Math.min(carState.speed + carState.acceleration, carState.maxSpeed);
+                    }
+                    if (keys.backward) {
+                        carState.speed = Math.max(carState.speed - carState.acceleration, -carState.maxSpeed * 0.5);
+                    }
+                    
+                    // Freinage
+                    if (keys.brake) {
+                        carState.speed *= 0.9;
+                    }
+                    
+                    // Friction
+                    if (!keys.forward && !keys.backward && !keys.brake) {
+                        carState.speed *= carState.friction;
+                    }
+                }
+                
+                // Direction
+                if (keys.left && Math.abs(carState.speed) > 0.1) {
+                    carState.rotation += carState.turnSpeed * Math.sign(carState.speed);
+                }
+                if (keys.right && Math.abs(carState.speed) > 0.1) {
+                    carState.rotation -= carState.turnSpeed * Math.sign(carState.speed);
+                }
+                
+                carState.velocity.x = Math.sin(carState.rotation) * carState.speed;
+                carState.velocity.z = Math.cos(carState.rotation) * carState.speed;
+                
+                carBody.position.x += carState.velocity.x * 0.1;
+                carBody.position.z += carState.velocity.z * 0.1;
+                carBody.rotation.y = carState.rotation;
+                
+                checkCollisions();
+                
+                // Collisions entre joueurs
+                const carPos = carBody.position;
+                const carRadius = 2;
+                
+                Object.keys(playerMeshes).forEach(playerId => {
+                    const otherPlayer = playerMeshes[playerId];
+                    if (otherPlayer && otherPlayer.position) {
+                        const dx = carPos.x - otherPlayer.position.x;
+                        const dz = carPos.z - otherPlayer.position.z;
+                        const distance = Math.sqrt(dx * dx + dz * dz);
+                        
+                        if (distance < carRadius * 2) {
+                            // Collision détectée avec un autre joueur
+                            const angle = Math.atan2(dz, dx);
+                            const pushDistance = (carRadius * 2) - distance;
+                            
+                            carBody.position.x += Math.cos(angle) * pushDistance * 0.5;
+                            carBody.position.z += Math.sin(angle) * pushDistance * 0.5;
+                            
+                            carState.speed *= 0.8;
+                        }
+                    }
+                });
+                
+                // Map infinie - pas de limites
+                
+                // Caméra - sauf en mode top-down
+                if (!isTopDownView) {
+                    const cameraDistance = 10;
+                    const cameraHeight = 5;
+                    const targetX = carBody.position.x - Math.sin(carState.rotation) * cameraDistance;
+                    const targetZ = carBody.position.z - Math.cos(carState.rotation) * cameraDistance;
+                    
+                    orbitControls.target.lerp(carBody.position, 0.1);
+                    camera.position.lerp(
+                        new THREE.Vector3(targetX, carBody.position.y + cameraHeight, targetZ),
+                        0.1
+                    );
+                }
+                
+                const speedKmh = Math.abs(carState.speed * 10).toFixed(0);
+                document.getElementById('speedValue').textContent = speedKmh;
+                
+                updatePlayerPosition();
+            }
+            
+            // En mode éditeur top-down, suivre la voiture
+            if (isEditorMode && isTopDownView && carBody) {
+                orbitControls.target.lerp(carBody.position, 0.05);
+            }
+            
+            orbitControls.update();
+            renderer.render(scene, camera);
+        }
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        animate();
+    </script>
+</body>
+</html>
