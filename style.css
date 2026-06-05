@@ -1,0 +1,389 @@
+/* ── Reset & Base ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d0d0f;
+  --panel: rgba(10,10,14,0.88);
+  --border: rgba(200,169,110,0.35);
+  --gold: #c8a96e;
+  --gold2: #f0d090;
+  --red: #e74c3c;
+  --green: #2ecc71;
+  --blue: #3498db;
+  --text: #e8e0d0;
+  --dim: rgba(232,224,208,0.45);
+  --font-display: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  background: var(--bg);
+  font-family: var(--font-display);
+  color: var(--text);
+  user-select: none;
+}
+
+/* ── World Canvas ─────────────────────────────── */
+#world {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+/* ── HUD ──────────────────────────────────────── */
+#hud {
+  position: fixed;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#hud-left, #hud-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#hud-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  min-width: 100px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
+.hud-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+.hud-value {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold);
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+#engine-status {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--red);
+  text-transform: uppercase;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  backdrop-filter: blur(8px);
+}
+#engine-status.on { color: var(--green); }
+
+.indicator { font-size: 18px; }
+.indicator.on { color: var(--green); }
+.indicator.off { color: var(--red); }
+
+/* ── Instruction Panel ────────────────────────── */
+#instruction-panel {
+  position: fixed;
+  bottom: 210px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+#instruction-text {
+  background: rgba(0,0,0,0.75);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: var(--gold2);
+  text-align: center;
+  backdrop-filter: blur(6px);
+  transition: opacity 0.4s;
+}
+
+#instruction-text kbd {
+  background: var(--gold);
+  color: #000;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  margin: 0 2px;
+}
+
+/* ── Steering Wheel ───────────────────────────── */
+#steering-wrapper {
+  position: fixed;
+  bottom: 185px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  width: 140px;
+  height: 140px;
+  cursor: grab;
+}
+
+#steering-wheel {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.05s linear;
+  filter: drop-shadow(0 0 18px rgba(200,169,110,0.4));
+}
+
+#steering-wheel svg { width: 100%; height: 100%; }
+
+/* ── Pedals ───────────────────────────────────── */
+#pedals-panel {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  gap: 18px;
+  padding: 12px 24px 16px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-radius: 18px 18px 0 0;
+  backdrop-filter: blur(14px);
+}
+
+.pedal-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 58px;
+}
+
+.pedal-label {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.3;
+  height: 26px;
+}
+
+.pedal-track {
+  position: relative;
+  width: 36px;
+  height: 120px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: ns-resize;
+}
+
+.pedal-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  border-radius: 18px;
+  transition: height 0.05s;
+}
+
+/* Couleurs par pédale */
+#pg-clutch .pedal-fill { background: linear-gradient(to top, #3498db88, #3498db33); }
+#pg-brake  .pedal-fill { background: linear-gradient(to top, #e74c3c99, #e74c3c33); }
+#pg-gas    .pedal-fill { background: linear-gradient(to top, #2ecc7199, #2ecc7133); }
+
+#pg-clutch .pedal-thumb { border-color: var(--blue); }
+#pg-brake  .pedal-thumb { border-color: var(--red); }
+#pg-gas    .pedal-thumb { border-color: var(--green); }
+
+.pedal-thumb {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 32px;
+  height: 18px;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid;
+  border-radius: 6px;
+  cursor: ns-resize;
+  transition: bottom 0.05s;
+  z-index: 2;
+}
+
+/* Locked (clutch toggled) */
+.pedal-track.locked .pedal-thumb { background: rgba(52,152,219,0.45); }
+
+.pedal-key {
+  font-size: 11px;
+}
+
+.pedal-key kbd {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+}
+
+.pedal-pct {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--dim);
+}
+
+/* ── Gear Shifter ─────────────────────────────── */
+#shifter-panel {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  z-index: 15;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 14px 14px 0 0;
+  padding: 12px 14px 14px;
+  backdrop-filter: blur(14px);
+  min-width: 110px;
+}
+
+#shifter-title {
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  margin-bottom: 8px;
+}
+
+#shifter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.gear-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-mono);
+}
+
+.gear-btn:hover {
+  background: rgba(200,169,110,0.15);
+  color: var(--gold);
+}
+
+.gear-btn.active {
+  background: rgba(200,169,110,0.25);
+  border-color: var(--gold);
+  color: var(--gold2);
+  box-shadow: 0 0 12px rgba(200,169,110,0.3);
+}
+
+.gear-btn[data-gear="R"].active {
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 0 0 12px rgba(231,76,60,0.3);
+}
+
+#shifter-keys {
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--dim);
+  text-align: center;
+  line-height: 1.6;
+}
+
+#shifter-keys kbd {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+/* ── Shortcuts Legend ────────────────────────── */
+#shortcuts {
+  position: fixed;
+  bottom: 0;
+  left: 14px;
+  z-index: 15;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--dim);
+  backdrop-filter: blur(12px);
+  line-height: 1.8;
+}
+
+#shortcuts kbd {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--gold);
+}
+
+/* ── Stall Flash ──────────────────────────────── */
+@keyframes stall-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.stall-flash {
+  animation: stall-flash 0.3s ease-in-out 3;
+}
+
+/* ── RPM Gauge Canvas — handled in JS ────────── */
+#rpm-gauge {
+  border-radius: 50%;
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 600px) {
+  #pedals-panel { gap: 10px; padding: 10px 12px 14px; }
+  .pedal-track { height: 90px; width: 30px; }
+  #shifter-panel { right: 6px; }
+  #shortcuts { font-size: 9px; }
+  #steering-wrapper { width: 110px; height: 110px; bottom: 195px; }
+}
